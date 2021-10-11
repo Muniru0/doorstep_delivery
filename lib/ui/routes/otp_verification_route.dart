@@ -217,7 +217,7 @@ final TextEditingController _otpController = TextEditingController();
            }
      },
         child: 
-        const Text("Send OTP Again", style: TextStyle(color: primaryColor,fontSize: 13, fontWeight: FontWeight.w900,decoration: TextDecoration.underline)),
+        const Text("Send OTP Again", style: TextStyle(color: goldColor,fontSize: 13, fontWeight: FontWeight.w900,decoration: TextDecoration.underline)),
    ),
 
           

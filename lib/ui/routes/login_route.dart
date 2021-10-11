@@ -57,6 +57,7 @@ class _LoginRouteState extends State<LoginRoute> {
     _userModel = register<UserModel>();
     _companyModel = register<CompanyModel>();
     handleInputFieldsFocus();
+
   }
 
   void handleInputFieldsFocus(){
@@ -113,7 +114,7 @@ class _LoginRouteState extends State<LoginRoute> {
                           margin: EdgeInsets.only(top: _h! * 0.05,left: 20.0),
                       
                         child:const Icon(Ionicons.ios_arrow_back,
-                         color: primaryColor,
+                         color: goldColor,
                           size: 17.0 ),
                         ),
                       ),
@@ -170,7 +171,7 @@ class _LoginRouteState extends State<LoginRoute> {
                               children: [
                                 Container(
                                   margin:const EdgeInsets.only(left: 20.0,bottom: 5.0),
-                                  child:const Text('EMAIL', style: TextStyle(color: warmPrimaryColor,fontWeight: FontWeight.bold, fontSize: 12.0)),
+                                  child:const Text('EMAIL', style: TextStyle(color: silverColor,fontWeight: FontWeight.bold, fontSize: 12.0)),
                                 ),
 
                                 Row(
@@ -190,7 +191,7 @@ class _LoginRouteState extends State<LoginRoute> {
                                    autofocus: true,
                                    
                                     style:const TextStyle(
-                                      color: primaryColor,
+                                      color: black,
                                       fontSize: 14.0,
                                       fontWeight : FontWeight.bold,
                                     ),
@@ -198,8 +199,8 @@ class _LoginRouteState extends State<LoginRoute> {
                                     decoration:const InputDecoration.collapsed(
                                       hintText: 'email',
                                       hintStyle: TextStyle(
-                                        color: Color(0xFFd7e0ef),
-                                        fontSize: 13,
+                                        color: silverColor,
+                                        fontSize: 11,
                                       ),
                                     ),
                                     onChanged: (String fullname){
@@ -250,7 +251,7 @@ class _LoginRouteState extends State<LoginRoute> {
                               children: [
                                 Container(
                                   margin:const EdgeInsets.only(left: 20.0,bottom: 5.0),
-                                  child:const Text('PASSWORD', style: TextStyle(color: warmPrimaryColor,fontWeight: FontWeight.bold, fontSize: 12.0)),
+                                  child:const Text('PASSWORD', style: TextStyle(color: silverColor,fontWeight: FontWeight.bold, fontSize: 12.0)),
                                 ),
 
                                 Row(
@@ -270,7 +271,7 @@ class _LoginRouteState extends State<LoginRoute> {
                                  
                                    obscureText: true,
                                     style: const TextStyle(
-                                      color: primaryColor,
+                                      color: black,
                                       fontSize: 14.0,
                                       fontWeight : FontWeight.bold,
                                     ),
@@ -278,8 +279,8 @@ class _LoginRouteState extends State<LoginRoute> {
                                     decoration:const InputDecoration.collapsed(
                                       hintText: 'password',
                                       hintStyle: TextStyle(
-                                        color: Color(0xFFd7e0ef),
-                                        fontSize: 13,
+                                        color: silverColor,
+                                        fontSize: 11,
                                       ),
                                     ),
                                     onChanged: (String fullname){
@@ -308,103 +309,143 @@ class _LoginRouteState extends State<LoginRoute> {
                  InkWell(
                    onTap: (){
                      Navigator.pushNamed(context, Constants.FORGOT_PASSWORD_ROUTE);
-                   },child: Container(margin:const EdgeInsets.only(top:15.0,left: 190.0 ),alignment: Alignment.centerLeft , child: const Text('Forgot Password?', style: TextStyle(color:brightMainColor, fontSize: 14.0)))),
-               
-               Container(
-                 margin: const EdgeInsets.only(bottom: 30,top: 35),
-                 child: InkWell(
-                   onTap: ()async{
+                   },child: Container(margin: EdgeInsets.only(top:5.0,left: _w! * 0.6),alignment: Alignment.centerLeft , child: const Text('Forgot Password?', style: TextStyle(color:brightMainColor, fontSize: 14.0)))),
 
-          if(!validateInputFields()){return;}
-
-          UtilityWidgets.requestProcessingDialog(context,title: 'Signing...');
-        
-        Map _authResult = await  _authModel.signInWithEmailAndPassword(email: emailController.text.trim(), password: passwordController.text.trim(),);
-              
-          
-              
-          Navigator.pop(context);
-          
-            // if there was a success response
-          if(_authResult['result']){
-
-            // check if the user obj is not null,
-            // then refresh the user and company models
-            if(_authResult['user_obj'] != null){
-
-
-        // refresh the user model before                
-        _userModel.refreshUserModel(user:_authResult['user_obj'] );
-          
-          // if the user has not yet verified his phone let him verify it. 
-          if(!_authResult['phone_verification']){
-       Map<String,dynamic> res = await  _authModel.sendOTPCode(phoneNumber: _userModel.getUser.phoneNumber) ;
-                    if(!res['result']){
-                    UtilityWidgets.requestErrorDialog(context,title: 'Sending Code',desc: res['desc'],cancelAction: (){
-                      Navigator.pop(context);
-                    } );
-
-                  Navigator.pushNamed(context, Constants.OTP_VERIFICATION_ROUTE);
-                  return;
-                    }
-                             
-                            }
-                              
-                        // update the company model
-                       if(_authResult['company_obj'] != null){
-        
-                _companyModel.refreshCompanyModel(company: _authResult['company_obj']);
-                    Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => HomeRoute()), (route) => false);
-                          return;
-                          
-                     
-
-               }
-               // send them to the appropriate screen if they dont have a company yet.
-                 else{
-
-                              var route = Constants.UNKNOWN_ROUTE;
-                                 // send the user to the appropriate screen 
-                          // depending on their roles 
-                          if(_userModel.getUser.userRole == Constants.COURIER_SERVICE_DIRECTOR_ROLE ){
-                           route = Constants.WELCOME_ROUTE;
-                          }else {
-                          route =  Constants.WAITING_DIRECTOR_AUTHORIZATION_ROUTE;
-
-                                 }
-                            
-                            Navigator.pushNamed(context,route);
-                            return;
-                          }
-                    }
-                    
-                    return;
-                    }
+                 Container(
+                   margin: EdgeInsets.only(top:_w! * 0.09),
+                   padding: EdgeInsets.only(left: _w! * 0.6,right: 20.0,),
+                   child: Material(
+                           borderRadius: BorderRadius.circular(25.0),
+                           shadowColor:const Color(0xFFf7c357),
+                            elevation: 10.0,
+                           child:
+                  
+                      InkWell(
+                       onTap: ()async{
                    
-                    UtilityWidgets.requestErrorDialog(context,title: 'Sign-In',desc: _authResult['desc'], cancelAction: (){
-                      Navigator.pop(context);
-                    },cancelText: 'Ok');
-
-           },
-                   child: 
-                   Container(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(vertical: 12.0),
-                    decoration: BoxDecoration(
-                      color: brightMainColor,
-                      borderRadius: BorderRadius.circular(5.0),
+                             if(!validateInputFields()){return;}
+                   
+                             UtilityWidgets.requestProcessingDialog(context,title: 'Signing...');
+                           
+                           Map _authResult = await  _authModel.signInWithEmailAndPassword(email: emailController.text.trim(), password: passwordController.text.trim(),);
+                                 
+                             
+                                 
+                             Navigator.pop(context);
+                             
+                               // if there was a success response
+                             if(_authResult['result']){
+                   
+                               // check if the user obj is not null,
+                               // then refresh the user and company models
+                               if(_authResult['user_obj'] != null){
+                   
+                   
+                           // refresh the user model before                
+                           _userModel.refreshUserModel(user:_authResult['user_obj'] );
+                             
+                             // if the user has not yet verified his phone let him verify it. 
+                             if(!_authResult['phone_verification']){
+                          Map<String,dynamic> res = await  _authModel.sendOTPCode(phoneNumber: _userModel.getUser.phoneNumber) ;
+                        if(!res['result']){
+                        UtilityWidgets.requestErrorDialog(context,title: 'Sending Code',desc: res['desc'],cancelAction: (){
+                          Navigator.pop(context);
+                        } );
+                   
+                      Navigator.pushNamed(context, Constants.OTP_VERIFICATION_ROUTE);
+                      return;
+                        }
+                                 
+                                }
+                                  
+                            // update the company model
+                           if(_authResult['company_obj'] != null){
+                           
+                                   _companyModel.refreshCompanyModel(company: _authResult['company_obj']);
+                        Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => HomeRoute()), (route) => false);
+                              return;
+                              
+                         
+                   
+                                  }
+                                  // send them to the appropriate screen if they dont have a company yet.
+                     else{
+                   
+                                  var route = Constants.UNKNOWN_ROUTE;
+                                     // send the user to the appropriate screen 
+                              // depending on their roles 
+                              if(_userModel.getUser.userRole == Constants.COURIER_SERVICE_DIRECTOR_ROLE ){
+                               route = Constants.WELCOME_ROUTE;
+                              }else {
+                              route =  Constants.WAITING_DIRECTOR_AUTHORIZATION_ROUTE;
+                   
+                                     }
+                                
+                                Navigator.pushNamed(context,route);
+                                return;
+                              }
+                        }
+                        
+                        return;
+                        }
+                       
+                        UtilityWidgets.requestErrorDialog(context,title: 'Sign-In',desc: _authResult['desc'], cancelAction: (){
+                          Navigator.pop(context);
+                        },cancelText: 'Ok');
+                   
+                              },
+                       child:
+                                Container(
+                                 width: 130,
+                                 height:50 ,
+                                 alignment: Alignment.center,
+                                 padding:const EdgeInsets.symmetric(vertical: 10.0,horizontal: 8.0),
+                                 decoration: BoxDecoration(
+                                   border: Border.all(width: 1.0,color:const Color(0xFFf7c357)),
+                                   borderRadius:  BorderRadius.circular(25),
+                                   gradient:const LinearGradient(
+                      colors: [Color(0xFFf7c357),Color(0xFFfea23c)],
+                      stops: [0.1,0.9],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                                   ),
+                                 ),
+                                 child: SizedBox(
+                                   width: 130.0,
+                                   height: 50.0,
+                                   child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text( 'Login',style:  TextStyle(color: white,fontSize: 12.5,fontWeight: FontWeight.bold)),
+                        const  SizedBox(width: 10.0),
+                       MirrorAnimation<double>(
+                        tween: Tween(begin: 0.0,end:10.0),
+                        duration:const Duration(seconds: 1),
+                        curve: Curves.easeInOut,
+                         builder: (context, child,value) {
+                           return Transform.translate(offset: Offset(value,0.0),child: const Icon(Feather.arrow_right,color: white,size: 15.0,));
+                         }
+                       ),
+                      ],
+                                   ),
+                                 ),
+                               ),
+                            
+                   
+                     ),
+                   
+                                
                  
-                    ),
-                    margin:const EdgeInsets.only(bottom: 00.0,top: 00.0,left: 20.0, right: 20.0),
-                     child:const Text('LOGIN', style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17.0,color: white )),
                    ),
-                 ),
-               ),
-
-     Row(
-         mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                 const  Text("Don't have account?",  style: TextStyle(
+                 ), 
+        
+      
+                 const  SizedBox(height: 80.0,),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                          const  Text("Don't have account?",  style: TextStyle(
                         color: Color(0xFF898989) ,
                         fontSize: 14.0,
                       ),
@@ -419,11 +460,11 @@ class _LoginRouteState extends State<LoginRoute> {
                       }
                            Navigator.pop(context);
                     }else{
-                   Navigator.push(context, CupertinoPageRoute(builder:(context)=> SignUpRoute()));
+                   Navigator.push(context, CupertinoPageRoute(builder:(context)=> const SignUpRoute()));
                     }
                  
                   
-                  },child:const Text(" Create a new account", style: TextStyle(color: primaryColor, fontSize: 14.0),)),
+                  },child:const Text(" Sign up", style: TextStyle(color: brightMainColor, fontSize: 14.0),)),
                 ],
               ),
 
@@ -519,7 +560,7 @@ Widget inputField({icon, title = '',hint = '',positionedHeight = 0.45, textField
                                  autofocus: hint == 'email',
                                  
                                   style:const TextStyle(
-                                    color: primaryColor,
+                                    color: black,
                                     fontSize: 12.0,
                                     fontWeight : FontWeight.bold,
                                   ),
@@ -848,13 +889,13 @@ Widget inputField({icon, title = '',hint = '',positionedHeight = 0.45, textField
 //                     child: Navigator.canPop(context)
 //                         ? Text(" Back",
 //                             style: TextStyle(
-//                                 color: primaryColor,
+//                                 color: goldColor,
 //                                 fontSize: 13,
 //                                 fontWeight: FontWeight.w900,
 //                                 decoration: TextDecoration.underline))
 //                         : Text("Register",
 //                             style: TextStyle(
-//                                 color: primaryColor,
+//                                 color: goldColor,
 //                                 fontSize: 13,
 //                                 fontWeight: FontWeight.w900,
 //                                 decoration: TextDecoration.underline)))),

@@ -211,7 +211,7 @@ class _OnboardingRouteState extends State<OnboardingRoute> {
               },
               child: Container(
                 height: Platform.isIOS ? 70 : 60,
-                color: primaryColor,
+                color: goldColor,
                 alignment: Alignment.center,
                 child: const Text(
                   "GET STARTED NOW",
@@ -283,7 +283,7 @@ class _OnboardingRouteState extends State<OnboardingRoute> {
           child: Text(title,
               textAlign: TextAlign.center,
               style:const TextStyle(
-                  color: true ? primaryColor :warmPrimaryColor,
+                  color: true ? goldColor :warmPrimaryColor,
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold)),
         ),

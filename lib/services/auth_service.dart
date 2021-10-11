@@ -592,7 +592,7 @@ class AuthService {
 
       try{
 
-              User? _user = await getCurrentUser();
+              User? _user = getCurrentUser();
               
               // check that the user exists
                 if(_user == null){

@@ -1,5 +1,11 @@
 
+import 'package:doorstep_delivery/constants.dart';
+import 'package:doorstep_delivery/ui/routes/home_route.dart';
+import 'package:doorstep_delivery/ui/routes/login_route.dart';
+import 'package:doorstep_delivery/ui/routes/otp_verification_route.dart';
+import 'package:doorstep_delivery/ui/routes/signup_route.dart';
 import 'package:doorstep_delivery/ui/routes/unknown_route.dart';
+import 'package:doorstep_delivery/ui/routes/waiting_company_authorization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -8,14 +14,28 @@ import 'package:flutter/material.dart';
 Route<dynamic> generateRoute(RouteSettings settings) {
 
   switch (settings.name) {
-  //       case Constants.SIGNUP_ROUTE:
-  //     return CupertinoPageRoute(builder: (context) => SignUpRoute());
+
+          case Constants.SIGNUP_ROUTE:
+          return CupertinoPageRoute(builder: (context) => const SignUpRoute());
+          
+          case Constants.OTP_VERIFICATION_ROUTE:
+          return CupertinoPageRoute(builder: (_) => const OTPVerificationRoute()); 
+          
+          case Constants.LOGIN_ROUTE:
+          return CupertinoPageRoute(builder: (context) =>const LoginRoute());
+
+          case Constants.WAITING_DIRECTOR_AUTHORIZATION_ROUTE :
+          return CupertinoPageRoute(builder: (context) =>const WaitingCompanyAuthorizationRoute());
+
+          case Constants.HOME_ROUTE:
+          return CupertinoPageRoute(builder: (context) =>  HomeRoute()); 
+
+
   //      case Constants.ADD_COMPANY_BRANCH_DESTINATIONS_ROUTE:
   //     return CupertinoPageRoute(builder: (context) => AddCompanyBranchDestinationsRoute());
   //      case Constants.SELECT_LOCATION_ON_MAP_ROUTE:
   //     return CupertinoPageRoute(builder: (_) => SelectLocationOnMapRoute());
-  //   case Constants.LOGIN_ROUTE:
-  //     return CupertinoPageRoute(builder: (context) => LoginRoute());
+
   //      case Constants.UNKNOWN_ROUTE:
   //     return CupertinoPageRoute(builder: (context) => UnknownRoute());
   //      case Constants.COMPANY_CREATION_SUCCESS_ROUTE:
@@ -42,8 +62,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
   //     return CupertinoPageRoute(builder: (_) => SuccessfulCourierAgentAdditionRoute());
   //    case Constants.REGISTRATION_ROUTE:
   //     return CupertinoPageRoute(builder: (_) => RegisterRoute());
-  //     case Constants.OTP_VERIFICATION_ROUTE:
-  //     return CupertinoPageRoute(builder: (_) => OTPVerificationRoute());  
+       
   //     case Constants.ALL_PARCELS_ROUTE :
   //     return CupertinoPageRoute(builder: (_) => AllParcelsListRoute()); 
   //     case Constants.SENT_PARCELS_ROUTE:
@@ -102,8 +121,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
   //     return CupertinoPageRoute(builder: (context) => ForgotPasswordRoute());
   //     case Constants.PARCEL_DELIVERY_OFFICERS_ROUTE :
   //     return CupertinoPageRoute(builder: (context) => ForgotPasswordRoute());
-  //      case Constants.WAITING_DIRECTOR_AUTHORIZATION_ROUTE :
-  //     return CupertinoPageRoute(builder: (context) => WaitingCompanyAuthorizationRoute());
+
       
 
 

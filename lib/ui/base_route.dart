@@ -15,7 +15,6 @@ import 'package:supercharged/supercharged.dart';
 
 class BaseView<T extends BaseModel> extends StatefulWidget {
   final Widget child;
-  var myCustomAppbar;
   bool requestPermissions;
   bool showBlurredOverlay;
   bool showAuthorizationOverlay;
@@ -34,7 +33,7 @@ class BaseView<T extends BaseModel> extends StatefulWidget {
 
   BaseView(
       {required this.child,
-      this.myCustomAppbar ,
+   
       this.showAuthorizationOverlay = false,
       this.showBlurredOverlay = false,
       this.screenTitle = "",
@@ -59,7 +58,6 @@ class _BaseViewState<T extends BaseModel> extends State<BaseView<T>>
   var authenticationFlag = false;
  late LocalAuthentication authentication;
   var hasInternetConnection = true;
-  BaseModel _baseModel = register<BaseModel>();
   var closeConnectionNotice;
   var internetServicesStream;
 
@@ -86,7 +84,7 @@ class _BaseViewState<T extends BaseModel> extends State<BaseView<T>>
   @override
   void didChangeDependencies() {
   
-  internetServicesStream = _baseModel.subscribeToConStatus().listen((event) {
+  internetServicesStream = register<BaseModel>().subscribeToConStatus().listen((event) {
     if(mounted){
 
     
@@ -147,7 +145,7 @@ late CustomAnimationControl simpleAnimControl ;
                                     Column(children:[
                                         Material(
                                         elevation: 10.0,
-                                        color: primaryColor ,
+                                        color: goldColor ,
                                         child: Container(
                                           padding:EdgeInsets.only(top: 20.0, bottom: 10.0),
                                           child: Row(

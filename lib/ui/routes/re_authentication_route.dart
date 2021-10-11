@@ -10,6 +10,7 @@ import 'package:doorstep_delivery/ui/utils/colors_and_icons.dart';
 import 'package:doorstep_delivery/ui/utils/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:simple_animations/simple_animations.dart';
@@ -22,8 +23,8 @@ class ReAuthRoute extends StatefulWidget {
 }
 
 class _ReAuthRouteState extends State<ReAuthRoute> {
-  
  final TextEditingController _passwordController = TextEditingController();
+
   late double _w;
   late double _h;
   var showPassword = false;
@@ -74,17 +75,52 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
 
     return BaseView<UserModel>(
       isBlankBaseRoute: true,
-      showBlurredOverlay: _showBlurredOverlay,
       child:Container(
-              padding:const EdgeInsets.only(top: 120.0, left: 20.0, right: 20.0),
+              padding: EdgeInsets.only(top: _h * 0.07, left: 20.0, right: 20.0),
               child: Column(
                 children: [
 
+                  PlayAnimation<double>(
+                    tween: Tween(begin: 0.0,end: 1.0),
+                    duration:const Duration(seconds: 1),
+                    curve: Curves.bounceInOut,
+                    builder: (context, child,value) {
+                      return Container(
+                        width: _w,
+                        margin:const EdgeInsets.only(left: 15.0),
+                        child: RichText(text:  TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Doorstep',
+                              style: TextStyle(color: brightMainColor,fontSize: 30.0 * value,fontWeight: FontWeight.bold)
+                            ),
+                             TextSpan(
+                              text: '\n \t\t\t\t\t\t\t\t Delivery',
+                              style: TextStyle(color: black,fontSize: 25.0 * value,fontWeight: FontWeight.bold)
+                            ),
+                          ]
+                        )),
+                      );
+                    }
+                  ),
 
-                  Container(
-                  margin: EdgeInsets.only(top: _h * 0.02),
-                  child: Icon(AntDesign.user,
-                   color: Colors.black.withOpacity(0.2),
+
+                  // Container(
+                  // margin: EdgeInsets.only(top: _h * 0.1),
+                  // child: Icon(MaterialIcons.delivery_dining,
+                  //  color: Colors.black.withOpacity(0.2),
+                  //   size: 70.0 ),
+                  // ),
+
+                    Container(
+                  margin: EdgeInsets.only(top: _h * 0.1),
+                  padding:const EdgeInsets.all(7.0),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFC0C0C0).withOpacity(0.5),
+                  ),
+                  child:const Icon(MaterialIcons.delivery_dining,
+                   color: black ,
                     size: 70.0 ),
                   ),
 
@@ -149,7 +185,7 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
                           setState(() => _isPasswordValid = false);
                         }
                       },
-                      hint: "Enter Your Password",
+                      hint: "password must be atleast 8 characters",
                       symbol: "",
                     ),
                   ),
@@ -163,7 +199,7 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
                           },
                           child:const Text("forgot Password",
                               style: TextStyle(
-                                  color: primaryColor,
+                                  color: goldColor,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w900,
                                   decoration: TextDecoration.underline)))),
@@ -174,7 +210,7 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
                         return UtilityWidgets.customConfirmationButton(context,
                             () async {
                           if (!_isPasswordValid) return;
-                          UtilityWidgets.requestProcessingDialog(context,
+                          UtilityWidgets.transactionProcessingDialog(context,
                               title: "Signing In");
                              
                        
@@ -185,36 +221,18 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
                           }
 
                          if(res['result']){
-          var route = Constants.UNKNOWN_ROUTE;
-          
-          if(res['data'] == null){
-            
-                    // send the user to their home screens
-                    // they are no records found for their respective companies.
-                    if(_user.userRole == Constants.COURIER_SERVICE_DIRECTOR_ROLE ){
-                    route = Constants.WELCOME_ROUTE;
-                    }else if(_user.userRole == Constants.COURIER_SERVICE_BRANCH_MANAGER_ROLE){
-                      route = Constants.WAITING_DIRECTOR_AUTHORIZATION_ROUTE;
-                    }else if(_user.userRole == Constants.COURIER_SERVICE_BRANCH_OFFICE_PERSONEL_ROLE){
-                    route = Constants.WAITING_DIRECTOR_AUTHORIZATION_ROUTE;
-                   }
-          }else{
+       
+                    
+                    if(res['data'] == null){
+                      
+                              Navigator.pushNamedAndRemoveUntil(context, Constants.WAITING_DIRECTOR_AUTHORIZATION_ROUTE, (route) => false);
+                              return;
+                    }
 
-                    // send the user to their home screens
-                    // provided they belong to a company
-                    if(_user.userRole == Constants.COURIER_SERVICE_DIRECTOR_ROLE ){
-                    route = Constants.COURIER_DIRECTOR_HOME_ROUTE;
-                    }else if(_user.userRole == Constants.COURIER_SERVICE_BRANCH_MANAGER_ROLE){
-                      route = Constants.COURIER_MANAGER_HOME_ROUTE;
-                    }else if(_user.userRole == Constants.COURIER_SERVICE_BRANCH_OFFICE_PERSONEL_ROLE){
-                    route = Constants.COURIER_SERVICE_BRANCH_OFFICE_PERSONEL_HOME_ROUTE;
-                   }
-          }
-         
-           Navigator.pushNamed(context, route);
-                        return;
+                        Navigator.pushNamedAndRemoveUntil(context, Constants.HOME_ROUTE, (route) => false);
+   
 
-      }
+         }
     
       UtilityWidgets.requestErrorDialog(context,title: 'Sign-In ',desc: res['desc'],cancelAction: (){
         Navigator.pop(context);
@@ -226,9 +244,9 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
                             isLong: true,
                             isDisabled: !_isPasswordValid);
                       })),
-                  Container(
-                      margin:const EdgeInsets.only(bottom: 25.0),
-                      child: customConfirmationButton()),
+                  // Container(
+                  //     margin:const EdgeInsets.only(bottom: 25.0),
+                  //     child: customConfirmationButton()),
                   Container(
                       margin:const EdgeInsets.only(bottom: 30.0),
                       child: InkWell(
@@ -279,10 +297,14 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
                           },
                           child:const Text("Sign Out",
                               style: TextStyle(
-                                  color: primaryColor,
+                                  color: goldColor,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w900,
                                   decoration: TextDecoration.underline)))),
+                
+               const Expanded(child: SizedBox()),
+                UtilityWidgets.copyrightWidget(_w)
+                
                 ],
               ),
             ),
@@ -350,7 +372,7 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
              Icon(Feather.eye,
                 color: !showPassword
                     ? const Color(0xFF182e65).withOpacity(0.2)
-                    : primaryColor,
+                    : goldColor,
                 size: 17),
           
         ),
@@ -383,34 +405,17 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
 
       
       if(res['result']){
-          var route = Constants.UNKNOWN_ROUTE;
+       
           
           if(res['data'] == null){
             
-                    // send the user to their home screens
-                    // they are no records found for their respective companies.
-                    if(_user.userRole == Constants.COURIER_SERVICE_DIRECTOR_ROLE ){
-                    route = Constants.WELCOME_ROUTE;
-                    }else if(_user.userRole == Constants.COURIER_SERVICE_BRANCH_MANAGER_ROLE){
-                      route = Constants.WAITING_DIRECTOR_AUTHORIZATION_ROUTE;
-                    }else if(_user.userRole == Constants.COURIER_SERVICE_BRANCH_OFFICE_PERSONEL_ROLE){
-                    route = Constants.WAITING_DIRECTOR_AUTHORIZATION_ROUTE;
-                   }
-          }else{
-
-                    // send the user to their home screens
-                    // provided they belong to a company
-                    if(_user.userRole == Constants.COURIER_SERVICE_DIRECTOR_ROLE ){
-                    route = Constants.COURIER_DIRECTOR_HOME_ROUTE;
-                    }else if(_user.userRole == Constants.COURIER_SERVICE_BRANCH_MANAGER_ROLE){
-                      route = Constants.COURIER_MANAGER_HOME_ROUTE;
-                    }else if(_user.userRole == Constants.COURIER_SERVICE_BRANCH_OFFICE_PERSONEL_ROLE){
-                    route = Constants.COURIER_SERVICE_BRANCH_OFFICE_PERSONEL_HOME_ROUTE;
-                   }
+                  Navigator.pushNamedAndRemoveUntil(context, Constants.WAITING_DIRECTOR_AUTHORIZATION_ROUTE, (route) => false);
+                  return ;
           }
+
+          Navigator.pushNamedAndRemoveUntil(context, Constants.HOME_ROUTE, (route) => false);
+                   
          
-           Navigator.pushNamed(context, route);
-           return;
 
       }
     

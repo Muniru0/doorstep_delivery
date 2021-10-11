@@ -9,7 +9,9 @@
 // import 'package:Business4pay/models/parcels_model.dart';
 // import 'package:Business4pay/models/user_model.dart';
 // import 'package:Business4pay/ui/routes/courier_industry/manager_home_route.dart';
+import 'package:doorstep_delivery/services/models/auth_model.dart';
 import 'package:doorstep_delivery/services/models/base_model.dart';
+import 'package:doorstep_delivery/services/models/courier_company_model.dart';
 import 'package:doorstep_delivery/services/models/user_model.dart';
 import 'package:get_it/get_it.dart';
 
@@ -21,11 +23,11 @@ void setupRegister(){
    register.registerSingleton<BaseModel>(BaseModel());
   // register.registerSingleton<BusinessModel>(BusinessModel());
   // register.registerSingleton<CourierIndustryModel>(CourierIndustryModel());
-  // register.registerSingleton<AuthModel>(AuthModel());
+   register.registerSingleton<AuthModel>(AuthModel());
   // register.registerSingleton<ParcelsModel>(ParcelsModel());
   // register.registerSingleton<CourierManagerModel>(CourierManagerModel());
    register.registerSingleton<UserModel>(UserModel());
-  // register.registerSingleton<CompanyModel>(CompanyModel());
+   register.registerSingleton<CompanyModel>(CompanyModel());
 
   // registering models
   // register.registerFactory<ErrorModel>(() => ErrorModel());

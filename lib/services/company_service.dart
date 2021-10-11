@@ -250,8 +250,8 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
         return {'result': true, 'data': staffSnapshot.data()};
 
-    }catch(e){
-
+    }on FirebaseException catch(e){
+        myPrint(e,heading: e.code);
       print('$e company service .dart line 120');
       return {'result':false,'desc': 'Request processing error, please try again later.'};
 

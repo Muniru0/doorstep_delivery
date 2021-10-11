@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:doorstep_delivery/services/auth_service.dart';
 import 'package:doorstep_delivery/services/data_models/company_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/user_data_model.dart';
+import 'package:doorstep_delivery/ui/utils/helper_functions.dart/functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
@@ -291,6 +292,8 @@ return {'result': true};
     }
   }
 
+
+  // initialize user 
   static Future<Map<String,dynamic>> initializeUser() async{
 
     try{
@@ -302,11 +305,11 @@ return {'result': true};
          Map<String,dynamic> userMap =  await getUser(spfInstance: spfInstance);
 
         // declare and initialize the resultant map
-        Map<String,dynamic> resultantMap = {'result': true,'user_data':MyUser(),'company_data':Company(),'firebase_user': null};
+        Map<String,dynamic> resultantMap = {'result': true,'user_data':MyUser(),'company_data':Company(),'firebase_user': null,'phone_verification': false};
 
         // get the current firebase user
         User? _user = AuthService().getCurrentUser();
- 
+
         
         // get show onboarding value
         Map<String,dynamic> showOnboardingMap = await getValue('show_onboarding');
@@ -324,6 +327,11 @@ return {'result': true};
           // fetch the users company info
           Map<String,dynamic> companyMapRes = await getCompany();
 
+          // get user auth claims
+          Map<String,dynamic> userClaims = await AuthService().getUserAuthClaimns();
+          
+         resultantMap['phone_verification'] = userClaims['phone_verification'];
+
            // add the users company info 
            resultantMap['company_data'] = companyMapRes['result'] ? companyMapRes['data'] : Company();
           
@@ -337,6 +345,8 @@ return {'result': true};
       return {'result': false, 'desc': 'Unexpected error, please try again.'};
     }
   }
+
+
 
    static Future<Map<String,dynamic>> storeCompany(Company _company)async{
       try{

@@ -30,6 +30,31 @@ class UtilityWidgets{
 
 
 
+
+static copyrightWidget(width){
+  return  Container(
+                 width: width,
+                 alignment: Alignment.center,
+                 margin: EdgeInsets.only(bottom:15.0),
+                 child: Row(
+                   mainAxisAlignment: MainAxisAlignment.center,
+                   children: [
+                     Text('Copyright ',style: TextStyle(color: warmPrimaryColor.withOpacity(0.6),fontSize: 11.5)),
+                     Container(
+                       child: Text(Constants.COPYRIGHT_SYMBOL,style: TextStyle(color: warmPrimaryColor.withOpacity(0.6),fontSize: 11.5))
+                     ),
+                     Container(
+                       
+                       child: Text("2019 - ${DateTime.now().year.toString()} Doorstep LTD. ",style: TextStyle(color: warmPrimaryColor.withOpacity(0.6),fontSize: 11.5),
+                     ),)
+                   ],
+                 )
+               );
+                 
+}
+
+
+
 static  refinedInformationDialog( {required BuildContext context, String desc = '', String title = '',required VoidCallback onTap,onTapText = 'Okay', color = brightMainColor, bool barrierDismissible = true}) {
   return showGeneralDialog(
       barrierColor: Colors.black.withOpacity(0.5),
@@ -37,12 +62,12 @@ static  refinedInformationDialog( {required BuildContext context, String desc = 
         return Transform.scale(
           scale: a1.value,
           child: AlertDialog(
-            shape: RoundedRectangleBorder(
+            shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10.0))),
-            contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-            actionsPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-            titlePadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-            buttonPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+            contentPadding:const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+            actionsPadding:const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+            titlePadding:const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+            buttonPadding:const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
             content: Container(
               padding: EdgeInsets.all(0.0),
               width: 270.0,
@@ -51,12 +76,12 @@ static  refinedInformationDialog( {required BuildContext context, String desc = 
                 Container(
                   width: 280.0,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
+                    borderRadius:const BorderRadius.only(
                         topLeft: Radius.circular(7),
                         topRight: Radius.circular(7)),
                     color: color,
                   ),
-                  padding: EdgeInsets.only(
+                  padding:const EdgeInsets.only(
                       left: 0.0, right: 0.0, top: 30, bottom: 30),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -65,11 +90,11 @@ static  refinedInformationDialog( {required BuildContext context, String desc = 
                       Container(
                         width:150,
                         alignment:Alignment.center,
-                          margin: EdgeInsets.only(left: 60),
+                          margin:const EdgeInsets.only(left: 60),
                           child: Text(title,
                               style: TextStyle(
                                   color: white, fontWeight: FontWeight.bold))),
-                      Expanded(child: SizedBox()),
+                    const  Expanded(child: SizedBox()),
                       InkWell(
                         splashColor: Colors.black.withOpacity(.3),
                         onTap: () {
@@ -78,17 +103,17 @@ static  refinedInformationDialog( {required BuildContext context, String desc = 
                           }
                         },
                         child: Container(
-                          margin: EdgeInsets.only(left: 20,right: 30.0),
+                          margin:const EdgeInsets.only(left: 20,right: 30.0),
 
-                          child: Icon(Ionicons.md_close, size: 20,color: white),
+                          child:const Icon(Ionicons.md_close, size: 20,color: white),
                         ),
                       ),
                     ],
                   ),
                 ),
-               Expanded(child: SizedBox()),
+               const Expanded(child: SizedBox()),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 7),
+                  padding:const EdgeInsets.symmetric(horizontal: 7),
                   child: Text('$desc',
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -267,7 +292,7 @@ static Widget proceedBanner({marginTop = 20.0,marginBottom: 20.0,icon = Feather.
                       child: loadingIndicator(
                           width: 15.0,
                           height: 15.0,
-                          valueColor: buttonBorderColor),
+                          valueColor: brightMainColor),
                     )),
                 InkWell(
                   onTap: onTap,
@@ -368,7 +393,7 @@ static Widget proceedBanner({marginTop = 20.0,marginBottom: 20.0,icon = Feather.
                   child: Container(
                     margin: EdgeInsets.only(right: 10),
                     child: Icon(AntDesign.check,
-                        size: 20.0, color: buttonBorderColor),
+                        size: 20.0, color: brightMainColor),
                   ),
                 ),
               ]),
@@ -832,46 +857,6 @@ disableAction();
 
 
 
-  static overlayChoicesWidget(OverlayChoice _overlayChoice) {
-    return InkWell(
-      splashColor: warmPrimaryColor.withOpacity(0.05),
-      onTap: _overlayChoice.choiceAction,
-      child: Container(
-        width: 300,
-        padding: EdgeInsets.symmetric(vertical: 15.0),
-        child: Row(
-          children: [
-            Text(_overlayChoice.choice,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: _overlayChoice.isSelected
-                      ? warmPrimaryColor
-                      : warmPrimaryColor.withOpacity(0.5),
-                )),
-  Expanded(child: SizedBox(),),
-                Visibility(
-                  
-                  visible: _overlayChoice.isSelected ,
-                                  child: Container(
-                    child: Icon(AntDesign.check,size: 20, color: warmPrimaryColor)
-                  ),
-                ),
-          ],
-        ),
-        decoration: BoxDecoration(
-          border: Border(
-              bottom: BorderSide(
-            width: 2.5,
-            color: _overlayChoice.isLast ? Colors.white : warmSecondaryColor,
-          )),
-        ),
-      ),
-    );
-  }
-
-
-
     static AnimatedPositioned scrollableChoicesOverlayWithTextField(context, animControl,
       {title = 'choose',
       onChanged,
@@ -920,9 +905,9 @@ disableAction();
                                             warmPrimaryColor.withOpacity(0.8))),
                                 decoration: BoxDecoration(
                                   border: Border(
-                                      bottom: BorderSide(
+                                      bottom:const BorderSide(
                                     width: 2.5,
-                                    color: warmSecondaryColor,
+                                    color: warmPrimaryColor,
                                   )),
                                 ),
                               ),
@@ -1015,7 +1000,7 @@ Container(width: 50.0, height:50.0,child:
                           children: [
                             TextSpan(
                             text: "Success",
-                            style: TextStyle(color:primaryColor),
+                            style: TextStyle(color:goldColor),
                           ),]
                         ),
                       ),),
@@ -1035,7 +1020,7 @@ Container(width: 50.0, height:50.0,child:
                           children: [
                             TextSpan(
                             text: "GH₵ $amountSent ",
-                            style: TextStyle(color:primaryColor,fontWeight: FontWeight.bold, fontSize: 13),
+                            style: TextStyle(color:goldColor,fontWeight: FontWeight.bold, fontSize: 13),
                           ),
 
                            TextSpan(
@@ -1044,7 +1029,7 @@ Container(width: 50.0, height:50.0,child:
                           ),
                           TextSpan(
                             text: "$receipientName",
-                            style: TextStyle(color: primaryColor,fontWeight: FontWeight.bold),
+                            style: TextStyle(color: goldColor,fontWeight: FontWeight.bold),
                           ),
                           ]
                         ),
@@ -1105,7 +1090,7 @@ Container(width: 50.0, height:50.0,child:
                             width: 300,
                           //  margin: EdgeInsets.only(bottom:10.0),
                             decoration: BoxDecoration(
-                              border: Border.all(width: 1.5,color:primaryColor ),
+                              border: Border.all(width: 1.5,color:goldColor ),
                             //  border: Border.all(width: 1.5,color:Color(0xFF80D8FF) ),
                               borderRadius: BorderRadius.circular(5.0),
                             ),
@@ -1216,7 +1201,7 @@ Container(width: 50.0, height:50.0,child:
                             width: 300,
                           //  margin: EdgeInsets.only(bottom:10.0),
                             decoration: BoxDecoration(
-                              border: Border.all(width: 1.5,color:primaryColor ),
+                              border: Border.all(width: 1.5,color:goldColor ),
                             //  border: Border.all(width: 1.5,color:Color(0xFF80D8FF) ),
                               borderRadius: BorderRadius.circular(5.0),
                             ),
@@ -1292,7 +1277,7 @@ Container(width: 50.0, height:50.0,child:
                       children: [
                         TextSpan(
                           text: 'Success',
-                          style: TextStyle(color: primaryColor),
+                          style: TextStyle(color: goldColor),
                         ),
                       ]),
                 ),
@@ -1326,7 +1311,7 @@ Container(width: 50.0, height:50.0,child:
                     width: 300,
                     //  margin: EdgeInsets.only(bottom:10.0),
                     decoration: BoxDecoration(
-                      border: Border.all(width: 1.5, color: primaryColor),
+                      border: Border.all(width: 1.5, color: goldColor),
                       //  border: Border.all(width: 1.5,color:Color(0xFF80D8FF) ),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
@@ -1428,7 +1413,7 @@ Container(width: 50.0, height:50.0,child:
                                         fontSize: subHeadingsSize)),
                           ),
                           Container(
-                            margin: EdgeInsets.only(bottom: 20.0),
+                            margin:const EdgeInsets.only(bottom: 20.0),
                             width: 290,
                             child: Row(children: [
                               Container(
@@ -1440,7 +1425,7 @@ Container(width: 50.0, height:50.0,child:
                                       width: 1.5, color: warmPrimaryColor),
                                 ),
                                 child: Icon(AntDesign.check,
-                                    color: buttonBorderColor, size: 20.0),
+                                    color: brightMainColor, size: 20.0),
                               ),
                               Container(
                                 width: 250,
@@ -1448,7 +1433,7 @@ Container(width: 50.0, height:50.0,child:
                                   onTap: termsOfUseTap,
                                                                   child: RichText(
                                     textAlign: TextAlign.center,
-                                    text: TextSpan(
+                                    text:const TextSpan(
                                         text: 'I have read and agreed to ',
                                         style: TextStyle(
                                           color: warmPrimaryColor,
@@ -1461,7 +1446,7 @@ Container(width: 50.0, height:50.0,child:
                                                 height: 1.4,
                                                 decoration:
                                                     TextDecoration.underline,
-                                                color: buttonBorderColor,
+                                                color: brightMainColor,
                                               ),
                                               text: 'the terms of use of'),
                                           TextSpan(
@@ -1476,8 +1461,7 @@ Container(width: 50.0, height:50.0,child:
                               ),
                             ]),
                           ),
-                          Container(
-                            child: Row(
+                       Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
@@ -1485,7 +1469,7 @@ Container(width: 50.0, height:50.0,child:
                                   customConfirmationButton(
                                       context, handleConfirmation,
                                       confirmationText: 'NEXT'),
-                                ]),
+                                ]
                           ),
                         ])),
                   ),
@@ -1506,32 +1490,30 @@ Container(width: 50.0, height:50.0,child:
       barrierLabel: '',
       pageBuilder: (context, anim1, anim2) {
         return AlertDialog(
-          contentPadding: EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 0.0),
+          contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 0.0),
           insetPadding: EdgeInsets.symmetric(horizontal: 10.0),
           content: Container(
             // padding: EdgeInsets.only(top: 20.0),
             height: 200.0,
-            color: Color(0xFFFEFEFC),
+            color: const Color(0xFFFEFEFC),
             child: Column(children: [
-              Container(
-                width: 50,
-                height: 50,
-                child: Image.asset('assets/images/transac_error_arrow.png'),
+              const  SizedBox(
+                 child: Icon(MaterialIcons.error,color:errorColor,size: 25 ),
               ),
 
               Container(
                 // width: 300,
-                margin: EdgeInsets.only(bottom: 5.0),
+                margin:const EdgeInsets.only(bottom: 5.0),
                 color: Colors.white,
                 alignment: Alignment.center,
                 child: RichText(
                   text: TextSpan(
                       text: title,
-                      style: TextStyle(
+                      style:const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF65749b),
                       ),
-                      children: [
+                      children: const [
                         TextSpan(
                           text: ' Failed',
                           style: TextStyle(color: errorColor),
@@ -1540,10 +1522,10 @@ Container(width: 50.0, height:50.0,child:
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(bottom: 37.0),
+                margin:const EdgeInsets.only(bottom: 37.0),
                 child: Text(desc,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Color(0xFF93a5bb),
                       fontSize: 12,
                     )),
@@ -1555,21 +1537,20 @@ Container(width: 50.0, height:50.0,child:
                   borderRadius: BorderRadius.circular(5.0),
                   color: Colors.white,
                   elevation: 20.0,
-                  // shadowColor: Color(0xFF80D8FF),
-                  shadowColor: Color(0xFFFFFFFF),
+                  shadowColor:white,
                   child: Container(
                     width: 300,
                     //  margin: EdgeInsets.only(bottom:10.0),
                     decoration: BoxDecoration(
-                      border: Border.all(width: 1.5, color: primaryColor),
+                      border: Border.all(width: 1.5, color: goldColor),
                       //  border: Border.all(width: 1.5,color:Color(0xFF80D8FF) ),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                     alignment: Alignment.center,
                     padding:
-                        EdgeInsets.symmetric(vertical: 12, horizontal: 10.0),
+                       const EdgeInsets.symmetric(vertical: 12, horizontal: 10.0),
                     child: Text(cancelText,
-                        style: TextStyle(
+                        style:const TextStyle(
                             color: Color(0xFF3c4e7e),
                             fontWeight: FontWeight.bold)),
                   ),
@@ -1600,15 +1581,15 @@ Container(width: 50.0, height:50.0,child:
         child: Container(
                            width: _width,
                            height: 60,
-                           margin:EdgeInsets.only(bottom:7.0),
-                           padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8.0),
-                           decoration: BoxDecoration(
+                           margin: const EdgeInsets.only(bottom:7.0),
+                           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8.0),
+                           decoration:const BoxDecoration(
                               
                                color: white,
                                borderRadius: BorderRadius.all(Radius.circular(10.0)),
                            ),
                          
-                           child: Container(
+                           child: SizedBox(
                              height: 55,
                              width: 360.0,
                              child: Row(
@@ -1623,25 +1604,22 @@ Container(width: 50.0, height:50.0,child:
                                 //   ),
                                  
                                  Container(
-                                   margin: EdgeInsets.only(left: 7.0),  
+                                   margin:const EdgeInsets.only(left: 7.0),  
                                     child: Column(
                                      mainAxisAlignment: MainAxisAlignment.center,
                                      crossAxisAlignment: CrossAxisAlignment.start,
                                      children: [
                                       
-                                      Container(
-                                         child: Text(title, style: TextStyle(color: warmPrimaryColor,fontSize: 15, fontWeight: FontWeight.bold))
-                                       ),
-                                        Container(
-                                         
-                                             child: Text(desc,style: TextStyle(fontSize: 12.0, color: Color(0xFF8987ab) ))
+                                     Text(title, style:const TextStyle(color: warmPrimaryColor,fontSize: 15, fontWeight: FontWeight.bold)),
+                                       
+                                        Text(desc,style: TextStyle(fontSize: 12.0, color: Color(0xFF8987ab) )
                                            ),
                                       ]
                                    ),
                                  ),
-                                 Expanded(child: SizedBox()),
+                               const  Expanded(child: SizedBox()),
                                  Container(
-                                    margin: EdgeInsets.only(right: 10),
+                                    margin:const EdgeInsets.only(right: 10),
                                    child: 
                                   Icon(Ionicons.ios_arrow_forward, size: 15, color: warmPrimaryColor.withOpacity(0.7)),
                                  ),
@@ -1705,16 +1683,16 @@ return OverlayEntry(
                                 fontWeight: FontWeight.bold,
                                 color: warmPrimaryColor.withOpacity(0.8)
                               )),
-                               decoration: BoxDecoration(
+                               decoration:const BoxDecoration(
                                 border: Border(bottom: BorderSide(
-                                  width: 2.5, color: warmSecondaryColor,
+                                  width: 2.5, color: warmPrimaryColor,
                                 )),
                               ),
                             ),
                          
                          InkWell(
                            onTap: (){
-                             print("here");
+                          
                           _overlayEntry.remove();
                            },
                             child: Column(
@@ -1729,7 +1707,7 @@ return OverlayEntry(
                     ),
                 ),
               
-                                 Visibility(visible: showCancelButton,child:Container(margin: EdgeInsets.only(top: 15.0),child: customConfirmationButton(context, cancelAction,confirmationText: "CANCEL", isLong: true,isDisabled: false))),
+                                 Visibility(visible: showCancelButton,child:Container(margin: const EdgeInsets.only(top: 15.0),child: customConfirmationButton(context, cancelAction,confirmationText: "CANCEL", isLong: true,isDisabled: false))),
              
               ],
             ),
@@ -1760,18 +1738,15 @@ data.forEach((title, desc) {
                     children: [
                       Expanded(
                          child: Container(
-                          margin: EdgeInsets.only(bottom: 15.0),
+                          margin:const EdgeInsets.only(bottom: 15.0),
                           
                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
-                                child: Text(title, style:TextStyle(color: Color(0xFF8e9eb5),fontSize: subHeadingsSize, fontWeight: FontWeight.bold )),
-                              ),
-                              Container(
-                                
-                                child: Text(desc, style:TextStyle(color:warmPrimaryColor ,fontSize: subHeadingsSize, fontWeight: FontWeight.w900 )),
-                              ),
+                               Text(title, style:TextStyle(color:const Color(0xFF8e9eb5),fontSize: subHeadingsSize, fontWeight: FontWeight.bold )),
+                              
+                               Text(desc, style:TextStyle(color:warmPrimaryColor ,fontSize: subHeadingsSize, fontWeight: FontWeight.w900 )),
+                              
 
                             ],
                           ),
@@ -1786,8 +1761,8 @@ data.forEach((title, desc) {
 
   return Container(
                 width:width ,
-                padding:EdgeInsets.symmetric(vertical: 15.0, horizontal: 13.0),
-                margin: EdgeInsets.only(bottom: 30.0),
+                padding:const EdgeInsets.symmetric(vertical: 15.0, horizontal: 13.0),
+                margin:const EdgeInsets.only(bottom: 30.0),
                 color: white,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1797,14 +1772,13 @@ data.forEach((title, desc) {
 }
   
 
-
 static overlayChoiceWidget(OverlayChoice _overlayChoice){
      return  InkWell(
        splashColor: warmPrimaryColor.withOpacity(0.05),
             onTap: _overlayChoice.choiceAction,
             child: Container(
          width: 300,
-                  padding: EdgeInsets.symmetric(vertical: 15.0),
+                  padding:const EdgeInsets.symmetric(vertical: 15.0),
                   child: Text(_overlayChoice.choice, style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -1866,14 +1840,14 @@ return OverlayEntry(
                                 fontWeight: FontWeight.bold,
                                 color: warmPrimaryColor.withOpacity(0.8)
                               )),
-                               decoration: BoxDecoration(
+                               decoration:const BoxDecoration(
                                 border: Border(bottom: BorderSide(
                                   width: 2.5, color: warmSecondaryColor,
                                 )),
                               ),
                             ),
 
-                            Container(
+                            SizedBox(
                               height: listHeight,
                               child: ListView.builder(
                                   itemCount:overlayChoices.length ,
@@ -1889,7 +1863,7 @@ return OverlayEntry(
                     ),
                 
               
-                  Visibility(visible: showCancelButton,child:Container(margin: EdgeInsets.only(top: 15.0),child: customConfirmationButton(context, cancelAction,confirmationText: "CANCEL", isLong: true,isDisabled: false))),
+                  Visibility(visible: showCancelButton,child:Container(margin:const EdgeInsets.only(top: 15.0),child: customConfirmationButton(context, cancelAction,confirmationText: "CANCEL", isLong: true,isDisabled: false))),
              
               ],
             ),
@@ -1905,6 +1879,46 @@ return OverlayEntry(
 );
   
   
+  }
+
+
+
+  static overlayChoicesWidget(OverlayChoice _overlayChoice) {
+    return InkWell(
+      splashColor: warmPrimaryColor.withOpacity(0.05),
+      onTap: _overlayChoice.choiceAction,
+      child: Container(
+        width: 300,
+        padding: EdgeInsets.symmetric(vertical: 15.0),
+        child: Row(
+          children: [
+            Text(_overlayChoice.choice,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: _overlayChoice.isSelected
+                      ? warmPrimaryColor
+                      : warmPrimaryColor.withOpacity(0.5),
+                )),
+  Expanded(child: SizedBox(),),
+                Visibility(
+                  
+                  visible: _overlayChoice.isSelected ,
+                                  child: Container(
+                    child: Icon(AntDesign.check,size: 20, color: warmPrimaryColor)
+                  ),
+                ),
+          ],
+        ),
+        decoration: BoxDecoration(
+          border: Border(
+              bottom: BorderSide(
+            width: 2.5,
+            color: _overlayChoice.isLast ? Colors.white : warmSecondaryColor,
+          )),
+        ),
+      ),
+    );
   }
 
 
@@ -2214,7 +2228,7 @@ AnimatedOpacity(
                              width:isLong ? screenWidth * 0.92 : 130,
                                 decoration: BoxDecoration(
                              //   color: Color(0xFF80D8FF),
-                             color: primaryColor,
+                             color: goldColor,
                                   borderRadius: BorderRadius.circular(5.0),
                                 ),
                                  alignment: Alignment.center,
@@ -2353,7 +2367,7 @@ return
                                   //       //    color: Color(0xFFf7f7fa),
                                   //       //    borderRadius: BorderRadius.all(Radius.circular(10)),
                                   //       //  ),
-                                  //        child: Text("status:", style: TextStyle(fontSize: 12, color: primaryColor,fontWeight: FontWeight.bold))
+                                  //        child: Text("status:", style: TextStyle(fontSize: 12, color: goldColor,fontWeight: FontWeight.bold))
                                   //      ),
                                        
                                   //      Container(
@@ -2373,7 +2387,7 @@ return
                                       //      color: Color(0xFFf7f7fa),
                                       //      borderRadius: BorderRadius.all(Radius.circular(10)),
                                       //    ),
-                                      //    child: Text("from:", style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color:primaryColor))
+                                      //    child: Text("from:", style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color:goldColor))
                                       //  ),
                                        
                                        Container(
@@ -2510,7 +2524,7 @@ return
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                         Container(
-                                     child: Text(senders[Random().nextInt(6)], style: TextStyle(color: primaryColor,fontSize: 15, fontWeight: FontWeight.bold))
+                                     child: Text(senders[Random().nextInt(6)], style: TextStyle(color: goldColor,fontSize: 15, fontWeight: FontWeight.bold))
                                    ),
                                    Row(
                                      children: [
@@ -2520,7 +2534,7 @@ return
                                         //    color: Color(0xFFf7f7fa),
                                         //    borderRadius: BorderRadius.all(Radius.circular(10)),
                                         //  ),
-                                         child: Text("status:", style: TextStyle(fontSize: 12, color: primaryColor,fontWeight: FontWeight.bold))
+                                         child: Text("status:", style: TextStyle(fontSize: 12, color: goldColor,fontWeight: FontWeight.bold))
                                        ),
                                        
                                        Container(
@@ -2539,7 +2553,7 @@ return
                                            color: Color(0xFFf7f7fa),
                                            borderRadius: BorderRadius.all(Radius.circular(10)),
                                          ),
-                                         child: Text("from:", style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color:primaryColor))
+                                         child: Text("from:", style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color:goldColor))
                                        ),
                                        
                                        Container(
@@ -2575,7 +2589,7 @@ return
                                     //    color: Color(0xFFf7f7fa),
                                     //    borderRadius: BorderRadius.all(Radius.circular(6.0)),
                                     //  ),
-                                     child: Text("Paid", style: TextStyle(color:primaryColor))
+                                     child: Text("Paid", style: TextStyle(color:goldColor))
                                    ),
                                  ]
                                ),
@@ -2603,18 +2617,18 @@ static Widget routeHeading(title, {onTap}){
                 
                   alignment: Alignment.centerLeft ,
                   margin: EdgeInsets.only(left: 10.0,top:20),
-                  child: Icon(Feather.arrow_left, color: primaryColor,),),
+                  child: Icon(Feather.arrow_left, color: goldColor,),),
               ),
                          Container(
                            margin: EdgeInsets.only(left: 10.0),
-                           child: Text(title, style: TextStyle(color: primaryColor,fontSize: 17.0, fontWeight: FontWeight.bold)),
+                           child: Text(title, style: TextStyle(color: goldColor,fontSize: 17.0, fontWeight: FontWeight.bold)),
                          ),
                         ],
                       );
           
 } 
 
-static Widget corneredButton({title,width: 270.0,elevation = 25.0,onTap, Color color = cornedButtonColor }){
+static Widget corneredButton({title,width: 270.0,elevation = 25.0,onTap, Color color = brightMainColor }){
 
   return  Container(
           
@@ -2632,7 +2646,7 @@ static Widget corneredButton({title,width: 270.0,elevation = 25.0,onTap, Color c
                               padding: EdgeInsets.symmetric(vertical: 18.0, ),decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: color,
-                    ),child: Text(title, style: TextStyle(color: white, fontSize: 14.0,fontWeight: FontWeight.bold))),
+                    ),child: Text(title, style:const TextStyle(color: white, fontSize: 14.0,fontWeight: FontWeight.bold))),
                           ),
                         )
                       );
@@ -2670,7 +2684,7 @@ Widget inputField({screenWidth = 0.0,controller,icon = "", title = '',hint = 're
                           children: [
                             Container(
                               margin: EdgeInsets.only(right: 7.0),
-                              child: Icon(icon, color: primaryColor,size: 14.0),
+                              child: Icon(icon, color: goldColor,size: 14.0),
                             ),
                     
                         Container(
@@ -2921,7 +2935,7 @@ getDialogWithSingleInputField(context,title,inputFieldController,{cancelText="CA
                           children: [
                             TextSpan(
                             text:"name",
-                            style: TextStyle(color: primaryColor),
+                            style: TextStyle(color: goldColor),
                           ),]
                         ),
                       ),),
@@ -2985,7 +2999,7 @@ getDialogWithSingleInputField(context,title,inputFieldController,{cancelText="CA
                            width: 130,
                               decoration: BoxDecoration(
                            //   color: Color(0xFF80D8FF),
-                           color: primaryColor,
+                           color: goldColor,
                                 borderRadius: BorderRadius.circular(5.0),
                               ),
                                alignment: Alignment.center,
@@ -3017,7 +3031,7 @@ getDialogWithSingleInputField(context,title,inputFieldController,{cancelText="CA
                         child: Container(
                             width: 130,
                             decoration: BoxDecoration(
-                              border: Border.all(width: 1.5,color:primaryColor ),
+                              border: Border.all(width: 1.5,color:goldColor ),
                             //  border: Border.all(width: 1.5,color:Color(0xFF80D8FF) ),
                               borderRadius: BorderRadius.circular(5.0),
                             ),

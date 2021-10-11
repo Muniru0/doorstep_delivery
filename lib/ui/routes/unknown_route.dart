@@ -37,7 +37,7 @@ class _UnknownRouteState extends State<UnknownRoute> {
               
                    const Text("404",
                       style: TextStyle(
-                          color: primaryColor,
+                          color: goldColor,
                           fontSize: 50.0,
                           fontWeight: FontWeight.bold)),
              
@@ -45,13 +45,13 @@ class _UnknownRouteState extends State<UnknownRoute> {
               Container(
                   margin: const EdgeInsets.only(top: 15.0, bottom: 25.0),
                   child: widget.error != null
-                      ? Text("Account Locked",
+                      ? Text("Please contact admin for further assistance.",
                           style: TextStyle(
                               color: warmPrimaryColor.withOpacity(0.9),
                               fontSize: 15.0))
                       : Text("Not Familiar ?",
                           style: TextStyle(
-                              color: primaryColor.withOpacity(0.9),
+                              color: goldColor.withOpacity(0.9),
                               fontSize: 15.0))),
               Container(
                   width: _w,

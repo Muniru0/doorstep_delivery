@@ -28,7 +28,7 @@ class _IsLoadingRouteState extends State<IsLoadingRoute> {
         body: Container(
           width: _w ,
           height: _h ,
-          color:primaryColor.withOpacity(0.7) ,
+          color:goldColor.withOpacity(0.7) ,
           child: Center(
             child: Column(
               children: [

@@ -129,7 +129,7 @@ late  bool noCourierCompaniesFound;
                         margin: EdgeInsets.only(top: _h * 0.05,left: 20.0),
                        
                       child:const Icon(Ionicons.ios_arrow_back,
-                       color: primaryColor,
+                       color: goldColor,
                         size: 17.0 ),
                       ),
                     ),
@@ -179,49 +179,90 @@ late  bool noCourierCompaniesFound;
                      
                   }),
 
+                    // select gender
                     genderField(),  
+
+                    // select town or city
                     selectTownOrCity(),
-                    selectUserRole(),
-                      
-                   inputField(controller: addressController,icon: Entypo.address,title: 'Address',onChanged: (String password){
+                   
+                    inputField(controller: addressController,icon: Entypo.address,title: 'Address',onChanged: (String password){
                       
                     }),
-                    inputField(controller: passwordController,icon: Feather.lock,obscureText: true,title: 'Password',onChanged: (String password){
+                    inputField(controller: passwordController,icon: Feather.lock,obscureText: true,title: 'password must be atleast 8 characters',onChanged: (String password){
                       
                     }),
                     
                     inputField(controller: confirmPasswordController,icon: Feather.lock,title: 'Confirm Password',hasMargin: false,obscureText: true,onChanged: (String confirmPassword){
                      
                     }),
-                          
+
+
+                        Container(
+                    width: _w * 0.8,
+                      margin:const EdgeInsets.only(top: 3.0, bottom:20.0),
+                        alignment: Alignment.center,
+                        child: Text(validationError,textAlign: TextAlign.center, style:const TextStyle(color: errorColor , fontSize: 14.0))
+                    ),
                         
-                                      
-            InkWell(
-            onTap: (){
-              if(FocusScope.of(context).hasFocus){
-                  FocusScope.of(context).unfocus();
-              }
-              if(!validateSignupForm()){
+            Container(
+               margin: EdgeInsets.only(top:_w * 0.09,bottom: 30.0),
+                   padding:const EdgeInsets.only(left:30.0,right: 30.0,),
+              child: Material(
+        borderRadius: BorderRadius.circular(25.0),
+        shadowColor:const Color(0xFFf7c357),
+        elevation: 10.0,
+         child: InkWell(
+              onTap: (){
+                if(FocusScope.of(context).hasFocus){
+                    FocusScope.of(context).unfocus();
+                }
+                if(!validateSignupForm()){
 
-              return;
-              }
-            showSignupConfirmationOverlay();
-            },
+                return;
+                }
+              showSignupConfirmationOverlay();
+              },
 
-        child: Container(
-        width: _w,
-        height: 50.0,
-        alignment: Alignment.center,
-        padding:const EdgeInsets.symmetric(vertical: 12.0),
-        decoration: BoxDecoration(
-          color:primaryColor,
-          borderRadius: BorderRadius.circular(5.0),
-            ),
-            margin:const EdgeInsets.only(bottom: 30.0,top: 35.0,left: 20.0, right: 20.0),
-            child:const Text('CREATE ACCOUNT', style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12.0,color: white )),
-          ),
+        child:     Container(
+              width: 130,
+              height:50 ,
+              alignment: Alignment.center,
+              padding:const EdgeInsets.symmetric(vertical: 10.0,horizontal: 8.0),
+              decoration: BoxDecoration(
+                border: Border.all(width: 1.0,color:const Color(0xFFf7c357)),
+                borderRadius:  BorderRadius.circular(25),
+                gradient:const LinearGradient(
+      colors: [Color(0xFFf7c357),Color(0xFFfea23c)],
+      stops: [0.1,0.9],
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
+                                     ),
+                                   ),
+                                   child: SizedBox(
+                                     width: 130.0,
+                                     height: 50.0,
+                                     child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text( 'Sign Up',style:  TextStyle(color: white,fontSize: 12.5,fontWeight: FontWeight.bold)),
+                          const  SizedBox(width: 10.0),
+                         MirrorAnimation<double>(
+                          tween: Tween(begin: 0.0,end:10.0),
+                          duration:const Duration(seconds: 1),
+                          curve: Curves.easeInOut,
+                           builder: (context, child,value) {
+                             return Transform.translate(offset: Offset(value,0.0),child: const Icon(Feather.arrow_right,color: white,size: 15.0,));
+                           }
+                         ),
+                        ],
+                                     ),
+                                   ),
+                                 ),
+                              
         ),
-      
+              ),
+            ),
       
           Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -244,7 +285,7 @@ late  bool noCourierCompaniesFound;
                       Navigator.push(context, CupertinoPageRoute(builder:(context)=>const LoginRoute()));
                         }
                     
-                      },child:const Text("Login", style: TextStyle(color: primaryColor, fontSize: 14.0),)),
+                      },child:const Text("Login", style: TextStyle(color: goldColor, fontSize: 14.0),)),
                     ],
                   ),
                  const SizedBox(height: 35.0)
@@ -283,9 +324,7 @@ late  bool noCourierCompaniesFound;
           }else if(selectedGender.isEmpty){
               validationError = 'Please select a gender.';
           }
-          else if(selectedRole.isEmpty){
-              validationError = 'Please select a role.';
-          } else if(selectedTownOrCity.trim().isEmpty){
+        else if(selectedTownOrCity.trim().isEmpty){
               validationError = 'Please select your town or city.';
           }
 
@@ -407,7 +446,7 @@ child: Column(
                                 children: [
                                   Container(
                                     margin:const EdgeInsets.only(right: 7.0),
-                                    child:const Icon(Ionicons.transgender_outline , color: primaryColor,size: 15.0),
+                                    child:const Icon(Ionicons.transgender_outline , color: goldColor,size: 15.0),
                                   ),
                 
               Container(
@@ -480,12 +519,12 @@ child: Column(
                                setState(() {
                                   overlayStateOccupied = false;
                                });   
-                            UtilityWidgets.requestProcessingDialog(context,title: 'creating account',);
+                            UtilityWidgets.transactionProcessingDialog(context,title: 'creating account',);
                     
                         
                          
                                // signup the user
-                              Map<String,dynamic>? res =  await  _authModel.signupUserWithEmailAndPassword(emailController.text.trim(),passwordController.text.trim(),fullname: fullnameController.text.trim(),userRole: selectedRole,dateOfBirth: dateOfBirthController.text.trim(), 
+                              Map<String,dynamic>? res =  await  _authModel.signupUserWithEmailAndPassword(emailController.text.trim(),passwordController.text.trim(),fullname: fullnameController.text.trim(),userRole: Constants.COURIER_SERVICE_DLIVERY_PERSONEL_ROLE,dateOfBirth: dateOfBirthController.text.trim(), 
                                address:addressController.text.trim(),
                                phone: phoneController.text.trim(),gender: selectedGender, townOrCity: selectedTownOrCity );
                     
@@ -587,7 +626,7 @@ child: Column(
                       _townOrCityOverlayEntry.remove();
                       setState(() {
                             overlayStateOccupied = false;
-                              _showBlurredOverlay = false;
+                            _showBlurredOverlay = false;
                       });
                     
                   },overlayChoices: _overlayChoices
@@ -626,7 +665,7 @@ child: Column(
                                         children: [
                                           Container(
                                             margin:const EdgeInsets.only(right: 7.0),
-                                            child:const Icon(FontAwesome.building_o, color: primaryColor,size: 15.0),
+                                            child:const Icon(FontAwesome.building_o, color: goldColor,size: 15.0),
                                           ),
                   
                             Container(
@@ -657,127 +696,7 @@ child: Column(
                                   
                                     }                            
                             
-
-
-  Widget selectUserRole(){
-            return   InkWell(
-              onTap: (){
-      
-                if(FocusScope.of(context).hasFocus){
-                    FocusScope.of(context).unfocus();
-                }
-  
-                List<OverlayChoice> _overlayChoices  =[];
-                
-             var m =  [Constants.COURIER_SERVICE_DIRECTOR_ROLE,Constants.COURIER_SERVICE_BRANCH_MANAGER_ROLE,Constants.COURIER_SERVICE_BRANCH_OFFICE_PERSONEL_ROLE].forEach((String role) { 
-                   _overlayChoices.add(OverlayChoice(
-                          choice: role,
-                          choiceAction:() {
-                            handleRoleSelection(role);
-                      },
-                      isSelected: selectedRole == role,
-                      ));
-            });
-
-                  if(overlayStateOccupied){
-                    return;
-                  }
-                          _roleOverlayEntry = UtilityWidgets.choicesOverlay(context, animControl,title: "Role",showCancelButton: true,cancelAction: (){
-                            _roleOverlayEntry.remove(); 
-                             if(overlayStateOccupied){
-                               setState(() {
-                                  overlayStateOccupied = false;
-                                   _showBlurredOverlay = false;
-                               });
-                             }
-                           
-                          },overlayChoices: _overlayChoices
-                                
-                                );
-              
-              
-                     Overlay.of(context)!.insert(_roleOverlayEntry);
-                     setState(() {
-                        overlayStateOccupied = true;
-                        _showBlurredOverlay = false;
-                      });
-                     
-                      },
-                          child: Column(
-                              children: [
-                Container(
-                      width: _w,
-                          padding:const EdgeInsets.symmetric(horizontal: 15.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(7.0),
-                              ),
-                              child: 
-                                Container(
-                                  padding:const EdgeInsets.all(7.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        margin:const EdgeInsets.only(left: 25.0,bottom: 5.0),
-                                        child:const Text("Role", style: TextStyle(color:Color(0xFFC0C0C0),fontWeight: FontWeight.bold, fontSize: 14.0)),
-                                      ),
-                  
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                        children: [
-                                          Container(
-                                            margin:const EdgeInsets.only(right: 7.0),
-                                            child:const Icon(Feather.user, color: primaryColor,size: 15.0),
-                                          ),
-                  
-                            Container(
-                                    width: _w * 0.7,
-                                    padding:const EdgeInsets.only(right: 15.0), 
-                                    child: 
-                                                                                                                Container(
-                                    child: selectedRole.isEmpty ? const Text("I am", style: TextStyle( color: Color(0xFFd7e0ef), )) : Text(selectedRole, style:const TextStyle(color: warmPrimaryColor ,fontSize: 14.0,fontWeight: FontWeight.bold))
-                                                      ),
-                                    
-                                    
-                                  ),
-                    
-                                    
-                                                      
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                
-                                              ),
-                                              const  SizedBox(height: 30.0 ),
-                                              ],
-                                            ),
-                                        );
-                                                                  
-                                  
-                                    }                            
-                                
-                            
-   void handleRoleSelection(String role) {
-                          
-        if(selectedRole != role){
-    
-          setState((){ selectedRole = role;
-           _showBlurredOverlay = false;});
-    
-        }
-        
-          _roleOverlayEntry.remove();
-          setState(() {
-            overlayStateOccupied = false;
-             _showBlurredOverlay = false;
-          });
-        
-                  
-     }
-              
-          
+   
                                                 
 Widget inputField({controller,icon = "", title = '',hint = 'required', defaultValue = '', hasMargin = true, isActive,required Function (String value) onChanged,focusNode ,bool obscureText = false, isGender = false, onTap}){
                     
@@ -807,7 +726,7 @@ Widget inputField({controller,icon = "", title = '',hint = 'required', defaultVa
                           children: [
                             Container(
                               margin:const EdgeInsets.only(right: 7.0),
-                              child: Icon(icon, color: primaryColor,size: 14.0),
+                              child: Icon(icon, color: brightMainColor,size: 14.0),
                             ),
                     
                         Container(
@@ -816,7 +735,7 @@ Widget inputField({controller,icon = "", title = '',hint = 'required', defaultVa
                           child: isGender ?     InkWell(
                             onTap:onTap,
                                 child: Container(
-                                child: selectedGender.isEmpty ? Text(defaultValue, style: const TextStyle(color: warmPrimaryColor,fontSize: 12.0 )) : Text(selectedGender, style:const TextStyle(color: primaryColor ))
+                                child: selectedGender.isEmpty ? Text(defaultValue, style: const TextStyle(color: warmPrimaryColor,fontSize: 12.0 )) : Text(selectedGender, style:const TextStyle(color: goldColor ))
                               ),
                                       ): 
                                       TextField(
@@ -826,8 +745,8 @@ Widget inputField({controller,icon = "", title = '',hint = 'required', defaultVa
                                         textAlign: TextAlign.start,
                                         obscureText: obscureText,
                                         style:const TextStyle(
-                                          color: warmPrimaryColor,
-                                          fontSize: 13,
+                                          color: black,
+                                          fontSize: 12,
                                           fontWeight : FontWeight.bold,
                                         ),
                                         
@@ -879,6 +798,8 @@ Widget inputField({controller,icon = "", title = '',hint = 'required', defaultVa
         
 
         }
+
+
 
 
  void handleOverlayInsertion(OverlayEntry _overlayEntry){

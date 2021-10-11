@@ -217,6 +217,8 @@ static const List<String> ALLOWED_TOWN_OR_CITIES = ['Accra','Kumasi','Tamale','T
 
  
   static const String COURIER_SERVICE_BRANCH_OFFICE_PERSONEL_ROLE = 'Courier Company Officer';
+  
+  static const String COURIER_SERVICE_DLIVERY_PERSONEL_ROLE  = 'Delivery Personel';
 
   static const String HOUR_GLASS_ICON = '${IMAGES}hour_glass.png';
 
@@ -262,6 +264,8 @@ static const List<String> ALLOWED_TOWN_OR_CITIES = ['Accra','Kumasi','Tamale','T
   static const String DAILY_PARCELS_STATS_COLLECTION_NAME = '__daily_parcels_stats';
 
   static const String NO_BRANCH_ADDED_ICON ='${IMAGES}no_branch_added.png';
+
+
 
 
 
