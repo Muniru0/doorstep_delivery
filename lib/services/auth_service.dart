@@ -1,15 +1,21 @@
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doorstep_delivery/constants.dart';
 import 'package:doorstep_delivery/services/company_service.dart';
+import 'package:doorstep_delivery/services/data_models/branch_managers_data_model.dart';
+import 'package:doorstep_delivery/services/data_models/branch_office_personel_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/company_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/user_data_model.dart';
+import 'package:doorstep_delivery/services/firebase_storage_uploader.dart';
 import 'package:doorstep_delivery/services/secure_store.dart';
 import 'package:doorstep_delivery/services/server_requests.dart';
 import 'package:doorstep_delivery/services/shared_prefs.dart';
 import 'package:doorstep_delivery/ui/utils/helper_functions.dart/functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/services.dart';
 
 class AuthService {
 
@@ -27,11 +33,26 @@ class AuthService {
       if(!_userAuthIdTokenMap['result']){
         return {'result':false,'desc':'Sorry, app restart required.'};
       }
+
+      
     return await ServerRequests.sendNetworkRequest(Constants.REQUEST_TYPE_SEND_OTP_CODE,params:{'phone_number': phoneNumber,'id_token': _userAuthIdTokenMap['data']});
     
     
       }
 
+
+    Future<Map<String,dynamic>> sendOtpToResetPassword({String phoneNumber = ''})async{
+
+      try{
+
+       return  await ServerRequests.sendNetworkRequest(Constants.SEND_RESET_PASSWORD_OTP_CODE_NETWORK_REQUEST_FLAG, params: {'phone_number': phoneNumber});
+        
+      }on PlatformException catch(e){
+         
+         myPrint(e.message,heading: e.code);
+        return {'result':false,'desc':'Unexpected error, please try again.'};
+      }
+    }
 
 
     // verify the otp of the user
@@ -101,7 +122,7 @@ class AuthService {
 
 
      // signup the user with email and password   
-    Future<Map<String,dynamic>?> signupUserWithEmailAndPassword({ String email = '',String password = '',String? fullname = '',String phoneNumber = '',dateOfBirth = '',String userRole = '', String gender = '', String townOrCity = '', String address = '',
+    Future<Map<String,dynamic>> signupUserWithEmailAndPassword({ String email = '',String password = '',String fullname = '',String phoneNumber = '',dateOfBirth = '',String userRole = '', String gender = '', String townOrCity = '', String address = '',required File userAvatarFile
         }) async {
     
        
@@ -113,20 +134,35 @@ class AuthService {
                    return {'result': false, 'desc': "Something went wrong, please restart the app to continue."};
               }
               
-          newUser.updateDisplayName("$fullname");
-          
+          newUser.updateDisplayName(fullname);
+            
+        
+     Map<String,dynamic> uploadRes = await  FirebaseFileUploader().uploadFile(userAvatarFile,remoteDir:Constants.USER_AVATARS_FIREBASE_STORAGE_DIRECTORY);
+     
+                if(!uploadRes['result']){
+                    newUser.delete();
+                    myPrint(uploadRes,heading: 'The upload res');
+                    return uploadRes;
+                }
+
+       
+
+  
+            String processedUrl = Uri.encodeComponent((uploadRes['data'].split('%2F').join('dhuhgk')));
+                
+            MyUser userObj = MyUser(fullname: fullname,avatarUrl:processedUrl,userRole: userRole,email: email,password: password,phoneNumber: phoneNumber,dateOfBirth: dateOfBirth,gender: gender,address: address,townOrCity: townOrCity,);
            
-
-            MyUser userObj = MyUser(firebaseUid: newUser.uid,fullname: fullname,userRole: userRole,email: email,password: password,phoneNumber: phoneNumber,dateOfBirth: dateOfBirth,gender: gender,address: address,townOrCity: townOrCity,);
-           
-
-          Map<String,dynamic> res =  await ServerRequests.sendNetworkRequest(Constants.STORE_NEW_USER_DATA,params:userObj.toMap());
+            Map<String,dynamic> userObjMap = userObj.toMap();
+        userObjMap['id_token'] =  await newUser.getIdToken();
+               
+          Map<String,dynamic> res =  await ServerRequests.sendNetworkRequest(Constants.STORE_NEW_USER_DATA,params:userObjMap);
           
 
-          if(!res['result']){
-              await newUser.delete();
-              return {'result':false, 'desc': res['desc']};
-          }
+              if(!res['result']){
+                  await newUser.delete();
+                  myPrint(res,heading: 'user creation error');
+                  return {'result':false, 'desc': res['desc']};
+              }
 
            await  newUser.getIdToken(true);
         
@@ -352,9 +388,28 @@ class AuthService {
               // map the user firestore doc
                 Map<String,dynamic>? userDoc = querySnapshot.data() as Map<String,dynamic>;
                     
+
+                    // update the delivery personel role if necessary
+                    if(userDoc[MyUserDataModel.USER_ROLE] == Constants.CUSTOMER_ROLE){
+                        
+                        var res = await getAuthIdToken();
+
+                        if(!res['result']){
+                          return res;
+                        }
+
+                        res = await ServerRequests.sendNetworkRequest(Constants.UPDATE_PRIVILEDGE_NETWORK_REQUEST_FLAG, params: {'id_token':res['data'],'from':userDoc[MyUserDataModel.USER_ROLE],'to': Constants.COURIER_SERVICE_DELIVERY_PERSONEL_ROLE});
+
+                        if(!res['result']){
+                          return res;
+                        }
+                    
+                    }
+
                 // remove the password from entry from the users doc
                 userDoc[MyUserDataModel.PASSWORD] = '';
               
+                myPrint(userDoc);
                 // create a userObj from the user doc
                 MyUser _myUser = MyUser.fromMap(userDoc);
 
@@ -376,11 +431,11 @@ class AuthService {
             
             // convert the staff doc into a staff obj
             
-              Map<String,dynamic> staffDocRes = await  _companyService.getCompanyStaff(authClaimsRes['user_role'], _myUser.firebaseUid);
+              Map<String,dynamic> staffDocRes = await  _companyService.getCompanyStaff(_myUser.firebaseUid);
 
-                    // if(staffDocRes['result'] && staffDocRes['data'] != null){
-                    //   companyDocID = Director.fromMap(staffDocRes['data']).companyDocID;
-                    // }
+                    if(staffDocRes['result'] && staffDocRes['data'] != null){
+                      companyDocID = DeliveryPersonel.fromMap(staffDocRes['data']).companyDocID;
+                    }
                 
                    
                     
@@ -443,59 +498,19 @@ class AuthService {
 
 
   // update the user's password
- Future<Map?> updateUserPassword({String email = '',String newPassword = ''}) async{
-   User? _user = getCurrentUser();
+ Future<Map?> updateUserPassword({String email = '',String newPassword = '', String code = '', String firebaseUid = '', String phoneNumber = ''}) async{
+  
    try{
-   
-      User? _user = getCurrentUser();
-     if(_user != null){
-
-        await _user.updatePassword(newPassword);
-       
-        return {'result': true, 'desc':''};
-     }
-
-            
-   }on FirebaseAuthException catch(e){
-      if(e.code == 'requires-recent-login'){
-
-           try{
-      var res =  await ServerRequests.sendNetworkRequest(Constants.FETCH_USER_PASSWORD_NETWORK_REQUEST_FLAG,params:{'email':email});
+      return  await ServerRequests.sendNetworkRequest(Constants.UPDATE_USER_PASSWORD_NETWORK_FLAG,params:{'phone_number':phoneNumber,'code': code,'password':newPassword,'firebase_uid': firebaseUid});
+          
+   }on PlatformException catch(e){
      
-        if(!res['result']){
-          return res;
-        }
-          AuthCredential _authCredential = EmailAuthProvider.credential(email: email, password: res['desc']);
-        
-
-         
-         await _user?.reauthenticateWithCredential(_authCredential);
-         await _user?.updatePassword(newPassword);
-
-         return {'result': true, 'desc':'sucess'};
-           }on FirebaseAuthException catch(e){
-            
-             if(e.code == 'user-mismatch'){
-               return {'result': false, 'desc': 'User not found.'};
-             }else if(e.code == 'user-not-found'){
-               return {'result': false,'desc': 'User not found.'};
-             }else if(e.code == 'invalid-email'){
-               return {'result': false, 'desc': 'Invalid email.'};
-             }else if(e.code == 'invalid-credential'){
-               return {'result': false, 'desc': 'Invalid credential.'};
-             }else{
-               return {'result': false, 'desc': 'Unexpected error, please try again later.'};
-             }
-
-           }
-
-      }else if(e.code == 'weak-password'){
-        return {'result': false, 'desc': 'Please provide a stronger password.'};
-      }
-      
-   }
+     myPrint(e.message,heading: e.code);
+     return {'result': false,'desc':'Unexcept'};
  }
 
+ }
+   
    
    // get the user auth claims
   Future<Map<String,dynamic>> getUserAuthClaimns({Set? authTokenKeys }) async{
@@ -612,7 +627,7 @@ class AuthService {
             }
 
          // look for the users record among the companies.
-        Map<String,dynamic>   res =  await _companyService.getCompanyStaff(userRole,_user.uid);
+        Map<String,dynamic>   res =  await _companyService.getCompanyStaff(_user.uid);
     // if the result positive
     if(res['result']){
           
@@ -668,7 +683,7 @@ class AuthService {
       }
      
     // look for the users record among the companies.
-    Map<String,dynamic> res = await _companyService.getCompanyStaff(userRole,_user.uid);
+    Map<String,dynamic> res = await _companyService.getCompanyStaff(_user.uid);
 
 
     // if the result positive

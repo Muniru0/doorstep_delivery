@@ -218,34 +218,20 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   
   
-  Future<Map<String,dynamic>> getCompanyStaff(userRole,staffFirebaseUid)async{
+  Future<Map<String,dynamic>> getCompanyStaff(staffFirebaseUid)async{
      try{
 
-        String docPath = Constants.COURIER_SERVICE_ROOT_DOC_PATH ;
+        
 
-        switch(userRole){
+    
 
-          case Constants.COURIER_SERVICE_BRANCH_MANAGER_ROLE:
-          docPath = docPath + Constants.COURIER_SERVICE_BRANCH_MANAGERS_COLLECTION_NAME + '/' + staffFirebaseUid;
-          break;
+          DocumentSnapshot staffSnapshot = await _firestore.doc(Constants.COURIER_SERVICE_ROOT_DOC_PATH + Constants.COURIER_SERVICE_DELIVERY_PERSONEL_COLLECTION_NAME + '/' +staffFirebaseUid).get();
 
-          default :
-          docPath = docPath + Constants.COURIER_SERVICE_DIRECTORS_COLLECTION_NAME + '/' + staffFirebaseUid;
-          break; 
-
-        }
-
-        print('----------DOC PATH OF COMPANY STAFF--------');
-        print(docPath);
-        print('-----------------END--------');
-
-      DocumentSnapshot staffSnapshot = await _firestore.doc(docPath).get();
-
-      if(!staffSnapshot.exists){
-      
-        return {'result':true,'data': null};
-      
-      }
+          if(!staffSnapshot.exists){
+          
+            return {'result':true,'data': null};
+          
+          }
 
 
         return {'result': true, 'data': staffSnapshot.data()};
@@ -560,21 +546,21 @@ return await ServerRequests.sendNetworkRequest(requestFlag, params: params);
 
 
   // fetch the company branch office personel
-  Future<Map<String,dynamic>> fetchCompanyBranchOfficePersonel({String branchID = ''}) async{
+  Future<Map<String,dynamic>> fetchCompanyDeliveryPersonel({String branchID = ''}) async{
     
 
  try{
    
-        QuerySnapshot _branchOfficePersonelSnapshot = await _firestore.collection(Constants.COURIER_SERVICE_ROOT_DOC_PATH + Constants.COURIER_SERVICE_OFFICE_PERSONEL_COLLECTION_NAME).where(BranchOfficePersonelDataModel.BRANCH_ID,isEqualTo: branchID).get();
+        QuerySnapshot _branchOfficePersonelSnapshot = await _firestore.collection(Constants.COURIER_SERVICE_ROOT_DOC_PATH + Constants.COURIER_SERVICE_OFFICE_PERSONEL_COLLECTION_NAME).where(DeliveryPersonelDataModel.BRANCH_ID,isEqualTo: branchID).get();
 
       if(_branchOfficePersonelSnapshot.size < 1){ 
         return {'result':true,'data': null};
         }
 
-          List<BranchOfficePersonel> data = [];
+          List<DeliveryPersonel> data = [];
         _branchOfficePersonelSnapshot.docs.forEach((QueryDocumentSnapshot branchOfficePersonelDoc) {
             myPrint(branchOfficePersonelDoc.data() as Map<String,dynamic>);
-            data.add(BranchOfficePersonel.fromMap(branchOfficePersonelDoc.data() as Map<String,dynamic>));
+            data.add(DeliveryPersonel.fromMap(branchOfficePersonelDoc.data() as Map<String,dynamic>));
 
         });
 
@@ -595,7 +581,7 @@ return await ServerRequests.sendNetworkRequest(requestFlag, params: params);
     return _firestore.collection(Constants.COURIER_SERVICE_ROOT_DOC_PATH + Constants.PARCELS_COLLECTION_NAME + '/' + companyFirestoreID + '/' + Constants.PARCELS_COLLECTION_NAME).snapshots();
   }
 
-  Future<Map<String,dynamic>> addCompanyBranchOfficePersonel({String branchID = '', String branchOfficePersonelEmail = '', String branchOfficePersonelPhone = ''}) async{
+  Future<Map<String,dynamic>> addCompanyDeliveryPersonel({String branchID = '', String branchOfficePersonelEmail = '', String branchOfficePersonelPhone = ''}) async{
     
      try{
 

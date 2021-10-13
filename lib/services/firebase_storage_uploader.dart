@@ -1,6 +1,7 @@
 import 'dart:io';
+import 'package:doorstep_delivery/ui/utils/helper_functions.dart/functions.dart';
 import 'package:firebase_core/firebase_core.dart' as fc;
-import 'package:firebase_storage/firebase_storage.dart' as fs;
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
@@ -10,26 +11,36 @@ import 'package:path/path.dart';
 
 class FirebaseFileUploader {
 
-  fs.FirebaseStorage _firebaseStorage = fs.FirebaseStorage.instance;
+  final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
-  Future<Map> uploadFile(File file, {remoteDir = ''}) async {
-    try {
+  Future<Map<String,dynamic>> uploadFile(File file, {remoteDir = '',bool getDownloadUrl = true})async {
+   
+     UploadTask uploadTask;
+    try{
+
+      
       var remoteFilePath = '$remoteDir/${basename(file.path)}';
 
-     
+      uploadTask = _firebaseStorage.ref(remoteFilePath).putFile(file);
 
-    fs.UploadTask  _uploadTask =
-          _firebaseStorage.ref('$remoteFilePath').putFile(file);
+      if(getDownloadUrl){
 
-      // Storage tasks function as a Delegating Future so we can await them.
-      await _uploadTask;
+        TaskSnapshot taskSnapshot = await uploadTask;
 
-      String downloadUrl =
-          await _firebaseStorage.ref('$remoteFilePath').getDownloadURL();
-      print('This is the downloadUrl($downloadUrl)');
-      return {'result': true, 'desc': downloadUrl};
+        if(taskSnapshot.state == TaskState.success){
+          String downloadUrl   = await taskSnapshot.ref.getDownloadURL();
+          
+          return {'result':true, 'data':downloadUrl};
+        }
+
+        return {'result':false,'desc': 'Error uploading file, please try again.'};
+
+      }
       
-    } on fc.FirebaseException catch (e) {
+     
+      return {'result':true,'data': uploadTask.snapshot };
+      
+    } on FirebaseException catch (e) {
       print(e.code);
       print(e);
       if (e.code == 'object-not-found') {
@@ -44,10 +55,13 @@ class FirebaseFileUploader {
       if (e.code == 'permission-denied') {
         return {'result': false, 'desc': 'Sorry upload failed.'};
       }
+          return {'result': false, 'desc': 'An unexpected error occured.'};
     }
-    return {'result': false, 'desc': 'An unexpected error occured.'};
+    
   }
 
+
+ 
   Future<Map> moveFile(File? file) async {
     String docDir = (await getApplicationDocumentsDirectory()).path;
 

@@ -6,6 +6,7 @@ class MyUserDataModel {
   static const String PASSWORD = 'password';
   static const String USER_ROLE = 'user_role';
   static const String FULLNAME = 'fullname';
+  static const String AVATAR_URL = 'avatar_url';
   static const String GENDER = 'gender';
   static const String ADDRESS = 'address';
   static const String DATE_OF_BIRTH = 'date_of_birth';
@@ -28,7 +29,8 @@ class MyUser {
   String userRole; 
   String email;
   String password;
-  String? fullname;
+  String fullname;
+  String avatarUrl;
   String phoneNumber;
   String dateOfBirth;
   String gender;
@@ -43,6 +45,7 @@ class MyUser {
     this.firebaseUid = '',
     this.userRole = '',
     this.fullname = '',
+    this.avatarUrl = '',
     this.email = '',
     this.password = '',
     this.dateOfBirth = '',
@@ -60,11 +63,13 @@ class MyUser {
       firebaseUid: json[MyUserDataModel.FIREBASE_UID],
       userRole: json[MyUserDataModel.USER_ROLE],
       fullname: json[MyUserDataModel.FULLNAME],
+      avatarUrl: json[MyUserDataModel.AVATAR_URL],
       email: json[MyUserDataModel.EMAIL],
       password: json[MyUserDataModel.PASSWORD],
       phoneNumber: json[MyUserDataModel.PHONE_NUMBER],
       address: json[MyUserDataModel.ADDRESS],
       townOrCity: json[MyUserDataModel.TOWN_OR_CITY],
+      dateOfBirth: json[MyUserDataModel.DATE_OF_BIRTH],
       dateJoined: json[MyUserDataModel.DATE_JOINED],
       lastSigninTime: json[MyUserDataModel.LAST_SIGN_IN_TIME],
       phoneVerification: toBool(json[MyUserDataModel.PHONE_VERIFICATION]),
@@ -75,6 +80,7 @@ class MyUser {
         MyUserDataModel.FIREBASE_UID: firebaseUid,
         MyUserDataModel.USER_ROLE : userRole,
         MyUserDataModel.FULLNAME: fullname,
+        MyUserDataModel.AVATAR_URL: avatarUrl,
         MyUserDataModel.PHONE_NUMBER: phoneNumber,
         MyUserDataModel.EMAIL: email,
         MyUserDataModel.PASSWORD: password,

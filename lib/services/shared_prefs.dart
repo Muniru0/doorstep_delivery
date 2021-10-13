@@ -309,7 +309,7 @@ return {'result': true};
 
         // get the current firebase user
         User? _user = AuthService().getCurrentUser();
-
+        
         
         // get show onboarding value
         Map<String,dynamic> showOnboardingMap = await getValue('show_onboarding');
@@ -330,6 +330,10 @@ return {'result': true};
           // get user auth claims
           Map<String,dynamic> userClaims = await AuthService().getUserAuthClaimns();
           
+          if(!userClaims['result']){
+            return {'firebase_user' : true,'user_data': MyUser,'company_data': Company(),'phone_verification': true};
+          }
+
          resultantMap['phone_verification'] = userClaims['phone_verification'];
 
            // add the users company info 

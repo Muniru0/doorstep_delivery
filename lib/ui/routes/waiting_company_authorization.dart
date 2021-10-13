@@ -17,6 +17,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:simple_animations/simple_animations.dart';
 
 
 class WaitingCompanyAuthorizationRoute extends StatefulWidget {
@@ -91,18 +92,24 @@ class _WaitingCompanyAuthorizationRouteState extends State<WaitingCompanyAuthori
                                    margin:const EdgeInsets.only(top: 25.0,bottom: 10.0),
                                    width: 120,
                                    height: 120.0,
-                                   child: Container(
-                                     width: 30,
-                                     height: 30,
-                                     padding:const EdgeInsets.only(left: 20.0 ),
-                                    
-                                     alignment: Alignment.topRight,
-                                     decoration: BoxDecoration(
-                                     color:const Color(0xFFC0C0C0).withOpacity(0.5),
-                                     borderRadius:BorderRadius.circular(7.0),
-
-                                   ),
-                                     child:Image.asset('assets/images/parcel_icon.png'),
+                                   child: PlayAnimation<Alignment>(
+                                     tween: Tween(begin: Alignment.bottomLeft,end: Alignment.topRight),
+                                     duration:const Duration(seconds: 1),
+                                     builder: (context, child,value) {
+                                       return Container(
+                                         width: 30,
+                                         height: 30,
+                                         padding:const EdgeInsets.only(left: 20.0 ),
+                                        
+                                         alignment:value,
+                                         decoration: BoxDecoration(
+                                         color:const Color(0xFFC0C0C0).withOpacity(0.5),
+                                         borderRadius:BorderRadius.circular(7.0),
+                                   
+                                       ),
+                                         child:Image.asset('assets/images/parcel_icon.png'),
+                                       );
+                                     }
                                    ),
                                  ),
                                  dot(color: brightMainColor.withOpacity(0.3)),
@@ -119,7 +126,7 @@ class _WaitingCompanyAuthorizationRouteState extends State<WaitingCompanyAuthori
                  child: Container(
                  
                    width: _w * 0.9,
-                   height: _h * 0.41,
+                   height: _h * 0.42,
                    padding:const EdgeInsets.symmetric(vertical: 15.0,horizontal: 15.0),
                    child:Column(children: [
                    Text(_userModel.getUser.userRole,style:const TextStyle(color: brightMainColor, fontSize: 14.5,fontWeight: FontWeight.bold)),
@@ -157,72 +164,90 @@ class _WaitingCompanyAuthorizationRouteState extends State<WaitingCompanyAuthori
              
                 ],
               ),     
-        Material(
-          elevation:15.0 ,
-          borderRadius: BorderRadius.circular(15.0),
-          color: Colors.transparent,
-          shadowColor: black.withOpacity(0.45),
-          child:
-                  ScopedModelDescendant<CompanyModel>(
-                 
-                    builder: (context, widget,model) {
-                      return InkWell(
-                        onTap: ()async{
-                         // model.getStaffAuthorization
-                        setState(() {
-                          showLoadingIndicator = true;
-                        });
-                     Map<String,dynamic> res =   await  model.getCompanyStaff(userRole: _userModel.getUser.userRole,firebaseUid: _userModel.getUser.firebaseUid); 
+        MirrorAnimation<double>(
+          tween: Tween(begin: 0.0,end: 1.0),
+          duration:const Duration(seconds: 1),
+          curve: Curves.easeInOut,
+          builder: (context, child,value) {
+
+            return Material(
+              elevation:15.0 * value,
+              borderRadius: BorderRadius.circular(15.0),
+              color: Colors.transparent,
+              shadowColor: black.withOpacity(0.45),
+              child:
+                      ScopedModelDescendant<CompanyModel>(
                      
-                       setState(() {
-                          showLoadingIndicator = false;
-                        });
-                       
-                     if(!res['result']){
-                       UtilityWidgets.requestErrorDialog(context,title: 'Request ',desc: res['desc'],cancelAction: (){
-                         Navigator.pop(context);
-                       },cancelText: 'Ok');
-                       return;
-                     }   
-                     if(res['company_data'] == null){
-                       UtilityWidgets.getToast('Not yet authorized.',textColor:white,duration: '2');
-                       return;
-                     }
-                     UtilityWidgets.requestSuccessDialog(context,title:'Authorization Success',desc: 'Please tap below to continue',cancelAction: (){
-                       Navigator.pop(context);
-                     },cancelText: 'Continue');
-                        
-                        },
-                      
-                              child: 
-                                      Container(
-                                      width: _w,
-                                      height: 50.0,
-                                      alignment: Alignment.center,
-                                      padding: const EdgeInsets.symmetric(vertical: 12.0),
-                                      decoration: BoxDecoration(
-                                        color:brightMainColor,
-                                        borderRadius: BorderRadius.circular(15.0),
-                                          ),
-                                          margin:const EdgeInsets.only(top: 15.0,left: 20.0, right: 20.0),
-                                          child: 
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                const Text('CHECK AUTHORIZATION', style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12.0,color: white )),
-                                              const  SizedBox(width: 15.0),
-                                                 Visibility(visible:showLoadingIndicator,child: loadingIndicator(valueColor: white))
-                                                                 
-                                                             
-                                              ],
-                                            ),
-                                          
-                                   
+                        builder: (context, widget,model) {
+                          return InkWell(
+                            onTap: ()async{
+                             // model.getStaffAuthorization
+                            setState(() {
+                              showLoadingIndicator = true;
+                            });
+                         Map<String,dynamic> res =   await  model.getCompanyStaff(userRole: _userModel.getUser.userRole,firebaseUid: _userModel.getUser.firebaseUid); 
+                         
+                           setState(() {
+                              showLoadingIndicator = false;
+                            });
+                           
+                         if(!res['result']){
+                           UtilityWidgets.requestErrorDialog(context,title: 'Request ',desc: res['desc'],cancelAction: (){
+                             Navigator.pop(context);
+                           },cancelText: 'Ok');
+                           return;
+                         }   
+                         if(res['company_data'] == null){
+                           UtilityWidgets.getToast('Not yet authorized.',textColor:black,duration: '2');
+                           return;
+                         }
+                         UtilityWidgets.requestSuccessDialog(context,title:'Authorization Success',desc: 'Please tap below to continue',cancelAction: (){
+                           Navigator.pop(context);
+                         },cancelText: 'Continue');
                             
-                              ),
-                          );
-                    }
-                  ),
+                            },
+                          
+                                  child: 
+                                          MirrorAnimation<double>(
+                                           tween: Tween(begin: 1.0,end: 1.05),
+                                           duration: const Duration(seconds: 1),
+                                           curve: Curves.easeInOut,
+                                            builder: (context, child,value) {
+                                              return Transform.scale(
+                                                scale: 1 * value,
+                                                child: Container(
+                                                width: _w,
+                                                height: 50.0,
+                                                alignment: Alignment.center,
+                                                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                                                decoration: BoxDecoration(
+                                                  color:brightMainColor,
+                                                  borderRadius: BorderRadius.circular(15.0),
+                                                    ),
+                                                    margin:const EdgeInsets.only(top: 15.0,left: 20.0, right: 20.0),
+                                                    child: 
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          const Text('CHECK AUTHORIZATION', style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12.0,color: white )),
+                                                        const  SizedBox(width: 15.0),
+                                                           Visibility(visible:showLoadingIndicator,child: loadingIndicator(valueColor: white))
+                                                                           
+                                                                       
+                                                        ],
+                                                      ),
+                                                    
+                                                                                     
+                                                                              
+                                                                                ),
+                                              );
+                                            }
+                                          ),
+                              );
+                        }
+                      ),
+            );
+          }
         ),
       
       

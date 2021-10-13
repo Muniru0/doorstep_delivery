@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.doorstep.doorstep_delivery">
    <application
-        android:label="doorstep_delivery"
+        android:label="Doorstep Delivery"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

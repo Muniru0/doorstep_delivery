@@ -12,6 +12,7 @@ import 'package:doorstep_delivery/ui/utils/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:simple_animations/simple_animations.dart';
 import 'package:validators/validators.dart';
 
@@ -136,7 +137,7 @@ class _LoginRouteState extends State<LoginRoute> {
                     width: _w,
                     alignment: Alignment.center,
                     margin: EdgeInsets.only(top: _h! * 0.02),
-                    child:const Text("Welcome", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0))
+                    child: Text("Welcome", style: GoogleFonts.montserrat(textStyle:const TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0)))
                   ),
                   Container(
                     width: _w,
@@ -171,7 +172,7 @@ class _LoginRouteState extends State<LoginRoute> {
                               children: [
                                 Container(
                                   margin:const EdgeInsets.only(left: 20.0,bottom: 5.0),
-                                  child:const Text('EMAIL', style: TextStyle(color: silverColor,fontWeight: FontWeight.bold, fontSize: 12.0)),
+                                  child:const Text('EMAIL', style: TextStyle(color: black,fontWeight: FontWeight.bold, fontSize: 12.0)),
                                 ),
 
                                 Row(
@@ -251,7 +252,7 @@ class _LoginRouteState extends State<LoginRoute> {
                               children: [
                                 Container(
                                   margin:const EdgeInsets.only(left: 20.0,bottom: 5.0),
-                                  child:const Text('PASSWORD', style: TextStyle(color: silverColor,fontWeight: FontWeight.bold, fontSize: 12.0)),
+                                  child:const Text('PASSWORD', style: TextStyle(color: black,fontWeight: FontWeight.bold, fontSize: 12.0)),
                                 ),
 
                                 Row(

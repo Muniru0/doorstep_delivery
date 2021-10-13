@@ -53,13 +53,13 @@ class CompanyModel extends BaseModel{
 
   String selectedDateRange   = '../../.. - ../../../';
 
-  List<BranchOfficePersonel> branchOfficePersonelList = [];
+  List<DeliveryPersonel> branchOfficePersonelList = [];
 
 
     
    File? get getCompanyBranchManagerAvatar => companyBranchManagerAvatar;
 
-  List<BranchOfficePersonel> get getBranchOfficePersonels => branchOfficePersonelList;
+  List<DeliveryPersonel> get getDeliveryPersonels => branchOfficePersonelList;
    void setCompanyBranchManagerAvatar(file){
 
         companyBranchManagerAvatar = file;
@@ -341,7 +341,7 @@ int get getTotalNumberOfDeliveryPersonel => totalNumberOfDeliveryPersonel;
 
   Future<Map<String,dynamic>> getCompanyStaff({String userRole = '',firebaseUid}) async{
    
-    return await _companyService.getCompanyStaff(userRole, firebaseUid);
+    return await _companyService.getCompanyStaff(firebaseUid);
 
   }
 
@@ -552,7 +552,7 @@ String get getSelectedDateRange => selectedDateRange;
     return await _companyService.addCompanyBranchManager(branchID: branchID,branchManagerEmail: branchManagerEmail,branchManagerPhone: branchManagerPhone);
   }
 
-  void addBranchOfficePersonelToList(int index, BranchOfficePersonel branchOfficePersonel) {
+  void addDeliveryPersonelToList(int index, DeliveryPersonel branchOfficePersonel) {
 
 
   
@@ -560,9 +560,9 @@ String get getSelectedDateRange => selectedDateRange;
    notifyListeners();
   }
 
-BranchOfficePersonel   removeFromCompanyBranchOfficePersonelsList(int index) {
+DeliveryPersonel   removeFromCompanyDeliveryPersonelsList(int index) {
      
-  BranchOfficePersonel branchOfficePersonel = branchOfficePersonelList.removeAt(index);
+  DeliveryPersonel branchOfficePersonel = branchOfficePersonelList.removeAt(index);
  
     notifyListeners();
     return branchOfficePersonel;
@@ -570,16 +570,16 @@ BranchOfficePersonel   removeFromCompanyBranchOfficePersonelsList(int index) {
 
 
 
-  Future<Map<String,dynamic>> getCompanyBranchOfficePersonels({String branchID = ''})async {
-return await _companyService.fetchCompanyBranchOfficePersonel(branchID: branchID);
+  Future<Map<String,dynamic>> getCompanyDeliveryPersonels({String branchID = ''})async {
+return await _companyService.fetchCompanyDeliveryPersonel(branchID: branchID);
 
   }
 
 
 
-  Future<Map<String,dynamic>> addBranchOfficePersonel({String branchID = '', String branchOfficePersonelEmail = '', String branchOfficePersonelPhone = ''}) async{
+  Future<Map<String,dynamic>> addDeliveryPersonel({String branchID = '', String branchOfficePersonelEmail = '', String branchOfficePersonelPhone = ''}) async{
 
-    return await _companyService.addCompanyBranchOfficePersonel(branchID: branchID,branchOfficePersonelEmail: branchOfficePersonelEmail,branchOfficePersonelPhone: branchOfficePersonelPhone);
+    return await _companyService.addCompanyDeliveryPersonel(branchID: branchID,branchOfficePersonelEmail: branchOfficePersonelEmail,branchOfficePersonelPhone: branchOfficePersonelPhone);
   }
 
 

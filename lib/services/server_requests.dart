@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:doorstep_delivery/services/data_models/company_data_model.dart';
+import 'package:doorstep_delivery/ui/utils/helper_functions.dart/functions.dart';
 import 'package:http/http.dart' as http;
 
 class ServerRequests {
@@ -22,10 +23,10 @@ static const  String  ADD_COURIER_BUSINESS = '4';
      
       String url =
           'https://us-central1-doorsteppay-50730.cloudfunctions.net/main?type=$requestType&$queryString';
-      print(Uri.encodeFull(url));
+      myPrint(Uri.encodeComponent(url),heading: 'Encoded Url');
  
 
-      // http://localhost:5001/doorsteppay-50730/us-central1/myMain?type=8&fullName=Yussif%20Muniru&my_ticket_doc_id=%20&destination=KUMASI&phone_number=0241792877&ticket_payment=0&bus_operator=2M%20EXPRESS&user_docID=4Z4IAlsORIeOfMIGkI0q&drop=ejura&boarding=circle&notification=false&busn_number=k&location=ACCRA&estimated_ticket_fare=12
+    
 
       var res = jsonDecode((await httpClient.post(Uri.parse(url))).body);
 

@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:doorstep_delivery/ui/utils/helper_functions.dart/functions.dart';
+import  'package:flutter/services.dart';
 import 'package:doorstep_delivery/model_registry.dart';
 import 'package:doorstep_delivery/services/auth_service.dart';
 import 'package:doorstep_delivery/services/data_models/company_data_model.dart';
@@ -14,35 +17,14 @@ class AuthModel extends BaseModel {
 
   String _otpTimer = "";
   Timer? timer ;
- final String _resetPasswordEmail = "";
-  String _regFullname = "";
-  String _regPhoneNumber = "";
-  String _regEmail = "";
-  String _regLocation = "";
-  bool _isPhoneVerificationType = true;
-  String _regPassword = "";
+
 
   bool get getIsBusy => _isBusy;
   void setIsBusy(bool param) {
     _isBusy = param;
 
     notifyListeners();
-  }
-
-  String get getRegPhoneNumber => _regPhoneNumber;
-  void setRegPhoneNumber(phoneNumber) {
-    _regPhoneNumber = phoneNumber;
-    notifyListeners();
-  }
-
-  bool get getIsPhoneVerificationType => _isPhoneVerificationType;
-  void changeRegVerificationType() {
-    _isPhoneVerificationType = !_isPhoneVerificationType;
-    print("$_isPhoneVerificationType");
-    notifyListeners();
-  }
-
-  
+  }  
 
   String get getOtpTimer => _otpTimer;
   void startOtpTimer() {
@@ -52,7 +34,7 @@ class AuthModel extends BaseModel {
           
 
         }
-    timer = Timer.periodic(Duration(seconds: 1), (t) { 
+    timer = Timer.periodic(const Duration(seconds: 1), (t) { 
       var sec = "0";
       var min = "0";
             if((60 - (t.tick % 60)) < 10){
@@ -119,7 +101,7 @@ class AuthModel extends BaseModel {
   //   return res;
   // }
 
-  Future<Map<String,dynamic>?> signupUserWithEmailAndPassword(String email, String password, {String fullname = '', String phone = '', String userRole = '',dateOfBirth ='', String gender = '', String townOrCity = '', String address = ''}
+  Future<Map<String,dynamic>> signupUserWithEmailAndPassword(String email, String password, {String fullname = '', String phone = '', String userRole = '',dateOfBirth ='', String gender = '', String townOrCity = '', String address = '', required File avatar}
       ) async {
 
 
@@ -134,49 +116,20 @@ class AuthModel extends BaseModel {
         dateOfBirth: dateOfBirth,
         townOrCity: townOrCity,
         phoneNumber: phone,
-       ) as Map<String,dynamic>;
+        userAvatarFile: avatar,
+       );
 
+      myPrint(res,heading: 'results from signup');
       return res;
       
-       }catch(e){
+       }on PlatformException catch(e){
          print('$e line 152 auth model');
+         myPrint(e.message,heading: e.code);
          return {'result': false, 'desc': "Sorry something went wrong, try again later."};
        }
   }
 
-  String get getRegFullname => _regFullname;
-  String get getRegEmail => _regEmail;
-  String get getPhoneNumber => _regPhoneNumber;
-  String get getRegPassword => _regPassword;
-  String get getRegLocation => _regLocation;
-  void setRegDetails(
-      {String fullname = "",
-      String location = "",
-      String email = "",
-      String phoneNumber = "",
-      String password = ""}) {
-    if (fullname.isNotEmpty) {
-      _regFullname = fullname;
-    }
-    if (email.isNotEmpty) {
-      _regEmail = email;
-    }
-
-    if (phoneNumber.isNotEmpty) {
-      _regPhoneNumber = phoneNumber;
-    }
-
-    if (password.isNotEmpty) {
-      _regPassword = password;
-    }
-
-    if (location.isNotEmpty) {
-      _regLocation = location;
-    }
-
-
-    notifyListeners();
-  }
+  
 
 
   Future<Map> isEmailVerified()async  {
@@ -217,8 +170,10 @@ class AuthModel extends BaseModel {
     
   }
 
-  Future<Map?> updateUserPassword({String email = '', String newPassword = ''})async {
-    return await _authService.updateUserPassword(email: email,newPassword: newPassword);
+  Future<Map?> updateUserPassword({ String newPassword = '', String phoneNumber = '', String firebaseUid = '', String code = ''})async {
+  
+    return await _authService.updateUserPassword(newPassword: newPassword,phoneNumber: phoneNumber,firebaseUid: firebaseUid,code: code);
+  
   }
 
   confirmUserPassword(String password ) async{
@@ -265,6 +220,18 @@ Future<Map<String,dynamic>> reauthenticateWithBiometrics({String userRole = '',S
   Future<Map<String,dynamic>> signOutCompletely() async{
 
     return await _authService.signOutCompletely();
+  }
+
+  Future<Map<String,dynamic>> sendCodeToRestPassword({String phoneNumber = ''}) async{
+
+    var res = await _authService.sendOtpToResetPassword(phoneNumber: phoneNumber);
+
+      if(res['result']){
+       
+         startOtpTimer();
+      }
+
+      return res;
   }
 
 

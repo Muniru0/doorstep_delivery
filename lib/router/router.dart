@@ -1,8 +1,12 @@
 
 import 'package:doorstep_delivery/constants.dart';
+import 'package:doorstep_delivery/ui/routes/forgot_password_route.dart';
 import 'package:doorstep_delivery/ui/routes/home_route.dart';
 import 'package:doorstep_delivery/ui/routes/login_route.dart';
 import 'package:doorstep_delivery/ui/routes/otp_verification_route.dart';
+import 'package:doorstep_delivery/ui/routes/password_updated_success_route.dart';
+import 'package:doorstep_delivery/ui/routes/re_authentication_route.dart';
+import 'package:doorstep_delivery/ui/routes/set_new_password_route.dart';
 import 'package:doorstep_delivery/ui/routes/signup_route.dart';
 import 'package:doorstep_delivery/ui/routes/unknown_route.dart';
 import 'package:doorstep_delivery/ui/routes/waiting_company_authorization.dart';
@@ -20,9 +24,20 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           
           case Constants.OTP_VERIFICATION_ROUTE:
           return CupertinoPageRoute(builder: (_) => const OTPVerificationRoute()); 
+
+           case Constants.RE_AUTH_ROUTE:
+          return CupertinoPageRoute(builder: (context) =>const ReAuthRoute());
           
           case Constants.LOGIN_ROUTE:
           return CupertinoPageRoute(builder: (context) =>const LoginRoute());
+
+
+          case Constants.FORGOT_PASSWORD_ROUTE:
+          return CupertinoPageRoute(builder: (context) => ForgotPasswordRoute());
+
+       
+          case Constants.SET_NEW_PASSWORD_ROUTE:
+          return CupertinoPageRoute(builder: (context) => const SetNewPasswordRoute());
 
           case Constants.WAITING_DIRECTOR_AUTHORIZATION_ROUTE :
           return CupertinoPageRoute(builder: (context) =>const WaitingCompanyAuthorizationRoute());
@@ -30,16 +45,15 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           case Constants.HOME_ROUTE:
           return CupertinoPageRoute(builder: (context) =>  HomeRoute()); 
 
+          case Constants.PASSWORD_UPDATED_SUCCESSFULLY_ROUTE:
+          return CupertinoPageRoute(builder: (context) =>const PasswordUpdatedSuccessfullyRoute());
 
-  //      case Constants.ADD_COMPANY_BRANCH_DESTINATIONS_ROUTE:
-  //     return CupertinoPageRoute(builder: (context) => AddCompanyBranchDestinationsRoute());
+
+ 
   //      case Constants.SELECT_LOCATION_ON_MAP_ROUTE:
   //     return CupertinoPageRoute(builder: (_) => SelectLocationOnMapRoute());
 
-  //      case Constants.UNKNOWN_ROUTE:
-  //     return CupertinoPageRoute(builder: (context) => UnknownRoute());
-  //      case Constants.COMPANY_CREATION_SUCCESS_ROUTE:
-  //     return CupertinoPageRoute(builder: (context) => CompanyCreationSuccessRoute());
+ 
   //     case Constants.COURIER_DIRECTOR_HOME_ROUTE :
   //     return CupertinoPageRoute(builder: (context) => DirectorHomeRoute());
   //     case Constants.ADD_COMPANY_BASIC_INFO_ROUTE:

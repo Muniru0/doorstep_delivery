@@ -1,16 +1,22 @@
+import 'dart:io';
+
 import 'package:doorstep_delivery/constants.dart';
 import 'package:doorstep_delivery/model_registry.dart';
 import 'package:doorstep_delivery/services/models/auth_model.dart';
 import 'package:doorstep_delivery/services/models/user_model.dart';
+import 'package:doorstep_delivery/services/utils/files_utils.dart';
 import 'package:doorstep_delivery/ui/base_route.dart';
 import 'package:doorstep_delivery/ui/routes/login_route.dart';
 import 'package:doorstep_delivery/ui/utils/colors_and_icons.dart';
+import 'package:doorstep_delivery/ui/utils/helper_functions.dart/functions.dart';
 import 'package:doorstep_delivery/ui/utils/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:simple_animations/simple_animations.dart';
 import 'package:validators/validators.dart';
 
@@ -74,6 +80,10 @@ late  bool noCourierCompaniesFound;
 
  late bool _showBlurredOverlay;
  late bool overlayStateOccupied;
+
+ var _selectedImage;
+
+
   
   
   @override
@@ -134,23 +144,164 @@ late  bool noCourierCompaniesFound;
                       ),
                     ),
 
-                    Container(
-                      width: _w,
-                      margin: EdgeInsets.only(top: _h * 0.07),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                      
+                         const SizedBox(width: 20.0),
+                       
+                         InkWell(
+                           onTap: (){
+                             
+                if(FocusScope.of(context).hasFocus){
+                    FocusScope.of(context).unfocus();
+                }
+                
+
+                if(overlayStateOccupied){
+                  return;
+                } 
+
+                setState(() {
+                  _showBlurredOverlay = true;
+                });
+                    _genderOverlayEntry = UtilityWidgets.choicesOverlay(context, animControl,showCancelButton: true,title: 'Choose Photo',cancelAction:(){
+                        _genderOverlayEntry.remove();
+                        if(overlayStateOccupied){
+                          setState(() {
+                             overlayStateOccupied = false;
+                              _showBlurredOverlay = false;
+                          });
+                        }
+                    },overlayChoices: [
+                    OverlayChoice(
+                          choice: 'Camera',
+                          choiceAction:() async{
+                          Map<String,dynamic>  res =   await getImage(ImageSource.camera);
+                               _genderOverlayEntry.remove();
+                               setState(() {
+                             overlayStateOccupied = false;
+                              _showBlurredOverlay = false;
+                          });
+
+                              if(!res['result']){
+                              UtilityWidgets.getToast(res['desc']);
+                              return;
+                              }
+                               myPrint(res['data'].path);
+                              setState(() {
+                                _selectedImage = File(res['data'].path);
+                              });
+                          },
+                          
+                          ),
+                    OverlayChoice(
+                            choice:'Gallery',
+                            choiceAction:()async{
+                                
+                             Map<String,dynamic>  res =   await getImage(ImageSource.gallery);
+                           
+                              _genderOverlayEntry.remove();
+                            setState(() {
+                             overlayStateOccupied = false;
+                              _showBlurredOverlay = false;
+                          });
+
+                              if(!res['result']){
+                              UtilityWidgets.getToast(res['desc']);
+                              return;
+                              }
+
+                              setState(() {
+                                _selectedImage = File(res['data'].path);
+                              });
+                    
+                          } ,
+                           
+                    )]);
+                       
+                  Overlay.of(context)!.insert(_genderOverlayEntry);
+              
+              setState(() {
+          overlayStateOccupied = true;
+            _showBlurredOverlay = false;
+        });
+                           },
+                           child:
+                           
+                           
+                        Stack(
+                  clipBehavior: Clip.none,
+                             children: [
+                              
+                                  Material(
+                                   shape: const CircleBorder(),
+                                  elevation: 15.0,
+                                  //shadowColor:brightMainColor.withOpacity(0.6),
+                                  child:_selectedImage != null ?  SizedBox(width: 95,height:95.0,child: ClipRRect(borderRadius: BorderRadius.circular(95 / 2),child: Image.file(_selectedImage!,fit: BoxFit.cover,))) :Container(
+                                    width: 95,
+                                    height: 95,
+                                  padding:const EdgeInsets.all(7.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: const Color(0xFFC0C0C0).withOpacity(0.5),
+                                  ),
+                                  child: Icon(FontAwesome.user_circle,
+                                  color: Colors.black.withOpacity(0.2),
+                                    size: 65.0 ),
+                                  ),
+                                        ),
+                               
+                               
+                                    Positioned(
+                                      bottom:7.0,
+                                      right: 0.0,
+                                      child: Container(
+                                       padding:const EdgeInsets.all(1.0),
+                                      decoration:const BoxDecoration(
+                                          color: white,
+                                         shape: BoxShape.circle,
+                                        ),
+                                       child: Container(
+                                      padding:const EdgeInsets.all(5.0),
+                                      alignment: Alignment.center,
+                                      decoration:const BoxDecoration(
+                                          color: brightMainColor,
+                                         shape: BoxShape.circle,
+                                        ),
+                                                                    
+                                      child:const Icon(Feather.edit_2,size: 15.0,color:white)
+                                                                    ),
+                                                                  ),
+                                    ),
+                               
+                             ],
+                           ),
+                  
+                         ),
+                       
+                         const SizedBox(width: 15.0),
+                      
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                            alignment: Alignment.center,
+                              child: const Text("Create Account", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23.0))
+                            ),
+                             Container(
+                               width:_w * 0.6,
+                      margin:const EdgeInsets.only(top: 1.5, bottom:5.0),
                       alignment: Alignment.center,
-                      child: const Text("Create Account", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 27.0))
+                      child: Text("Upload a clear image of your current appearance.", style: TextStyle(color: Colors.black.withOpacity(0.8) , fontSize: 12.0))
                     ),
-                    Container(
-                      margin:const EdgeInsets.only(top: 3.0, bottom:5.0),
-                      alignment: Alignment.center,
-                      child: Text("Create a new account", style: TextStyle(color: Colors.black.withOpacity(0.8) , fontSize: 14.0))
+                    
+                          ],
+                        ),
+                       
+                      ],
                     ),
-                     Container(
-                       width: _w * 0.8,
-                      margin:const EdgeInsets.only(top: 3.0, bottom:5.0,),
-                      alignment: Alignment.center,
-                      child: Text("Note: Signup if you have never signup for any account on Doorstep.",textAlign: TextAlign.center, style: TextStyle(color: Colors.black.withOpacity(0.8) , fontSize: 11.0))
-                    ),
+                   
 
                    
                   Container(
@@ -188,7 +339,7 @@ late  bool noCourierCompaniesFound;
                     inputField(controller: addressController,icon: Entypo.address,title: 'Address',onChanged: (String password){
                       
                     }),
-                    inputField(controller: passwordController,icon: Feather.lock,obscureText: true,title: 'password must be atleast 8 characters',onChanged: (String password){
+                    inputField(controller: passwordController,icon: Feather.lock,obscureText: true,title: 'Password',defaultValue:'password must be atleast characters',onChanged: (String password){
                       
                     }),
                     
@@ -223,7 +374,8 @@ late  bool noCourierCompaniesFound;
               showSignupConfirmationOverlay();
               },
 
-        child:     Container(
+        child:    
+         Container(
               width: 130,
               height:50 ,
               alignment: Alignment.center,
@@ -524,9 +676,9 @@ child: Column(
                         
                          
                                // signup the user
-                              Map<String,dynamic>? res =  await  _authModel.signupUserWithEmailAndPassword(emailController.text.trim(),passwordController.text.trim(),fullname: fullnameController.text.trim(),userRole: Constants.COURIER_SERVICE_DLIVERY_PERSONEL_ROLE,dateOfBirth: dateOfBirthController.text.trim(), 
+                              Map<String,dynamic> res =  await  _authModel.signupUserWithEmailAndPassword(emailController.text.trim(),passwordController.text.trim(),fullname: fullnameController.text.trim(),avatar: _selectedImage,userRole: Constants.COURIER_SERVICE_DELIVERY_PERSONEL_ROLE,dateOfBirth: dateOfBirthController.text.trim(), 
                                address:addressController.text.trim(),
-                               phone: phoneController.text.trim(),gender: selectedGender, townOrCity: selectedTownOrCity );
+                               phone: phoneController.text.trim(),gender: selectedGender, townOrCity: selectedTownOrCity);
                     
                     
                                   if(Navigator.canPop(context)){
@@ -746,7 +898,6 @@ Widget inputField({controller,icon = "", title = '',hint = 'required', defaultVa
                                         obscureText: obscureText,
                                         style:const TextStyle(
                                           color: black,
-                                          fontSize: 12,
                                           fontWeight : FontWeight.bold,
                                         ),
                                         
@@ -813,8 +964,5 @@ Widget inputField({controller,icon = "", title = '',hint = 'required', defaultVa
   
 
 }
-
-
-
 
 }

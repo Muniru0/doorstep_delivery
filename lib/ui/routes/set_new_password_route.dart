@@ -9,29 +9,40 @@ import 'package:doorstep_delivery/ui/utils/colors_and_icons.dart';
 import 'package:doorstep_delivery/ui/utils/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:validators/validators.dart';
 
 
-class OTPVerificationRoute extends StatefulWidget {
+class SetNewPasswordRoute extends StatefulWidget {
 
-  final bool hasCustomAfterVerification;
-  final VoidCallback? customAfterVerification;
-  const OTPVerificationRoute({this.hasCustomAfterVerification = false, this.customAfterVerification,Key? key}) : super(key: key);
-  
- 
+    const SetNewPasswordRoute({Key? key}) : super(key: key);
+
   @override
-  _OTPVerificationRouteState createState() => _OTPVerificationRouteState();
+  _SetNewPasswordRouteState createState() => _SetNewPasswordRouteState();
+
 }
 
-class _OTPVerificationRouteState extends State<OTPVerificationRoute> {
+class _SetNewPasswordRouteState extends State<SetNewPasswordRoute> {
  
-final TextEditingController _otpController = TextEditingController();
 
- bool confirmButtonActivation = false;
- late AuthModel _authModel;
- late UserModel _userModel;
- late String phoneNumber;
+
+  bool confirmButtonActivation = false;
+  late AuthModel _authModel;
+  late UserModel _userModel;
+  late String phoneNumber;
+
+
+  final TextEditingController _otpController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  late bool activateSignInButtons ;
+  late bool _passwordVisibility;
+  late bool _confirmPasswordVisibility;
+
+  late String validationError;
 
 
  @override 
@@ -39,6 +50,10 @@ final TextEditingController _otpController = TextEditingController();
    super.initState();
    _authModel = register<AuthModel>();
    _userModel = register<UserModel>();
+    activateSignInButtons = false;
+    _passwordVisibility = false;
+    _confirmPasswordVisibility = false;
+    validationError = '';
     phoneNumber = 'Phone unavailable';
    
    if(_userModel.getUser.phoneNumber.isNotEmpty){
@@ -47,6 +62,14 @@ final TextEditingController _otpController = TextEditingController();
     
    
  }
+
+ @override
+  void dispose() {
+    _otpController.dispose();
+    _passwordController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +86,7 @@ final TextEditingController _otpController = TextEditingController();
           children: [
          Container(
            margin:const EdgeInsets.only(bottom: 10.0),
-           child:Text("Please verify the OTP code", style: TextStyle(color: warmPrimaryColor,fontSize: headingsSize, fontWeight: FontWeight.bold)
+           child:Text("Set New Password", style: TextStyle(color: warmPrimaryColor,fontSize: headingsSize, fontWeight: FontWeight.bold)
          ),
          ),
    Container(
@@ -88,6 +111,10 @@ final TextEditingController _otpController = TextEditingController();
    
 
    ),
+   SizedBox(
+     height: 15.0,
+     child: Text(validationError,style:const TextStyle(color:errorColor,fontSize: 12,fontWeight: FontWeight.bold)),
+   ),
     ScopedModelDescendant<AuthModel>(
     
       builder: (context, child,model) {
@@ -100,7 +127,7 @@ final TextEditingController _otpController = TextEditingController();
      child: UtilityWidgets.fadedCustomTextField(_otpController,onChanged:(String otpCode){
 
     
-      if(isNumeric(otpCode) && otpCode.length == 6){
+      if(isNumeric(otpCode)){
         setState((){
           confirmButtonActivation = true;
         });
@@ -114,22 +141,74 @@ final TextEditingController _otpController = TextEditingController();
 
      },hint: "Enter the verification code", symbol: "")
    ),
+  Container(
+         margin:const EdgeInsets.only(bottom: 20.0),
+         child:
+          
+          UtilityWidgets.broadCustomTextField(_passwordController,symbol: '',hint: "New password", obscureText: !_passwordVisibility,enableTrailingIcon: true,iconAction: (){
+            setState(() {
+                _passwordVisibility = !_passwordVisibility;
+            });
+          },trailingIcon: !_passwordVisibility ? Feather.eye_off : Feather.eye,onChanged: (String passwordCredential){
+           
+
+           
+
+
+          },),
+   ),
+  
+      Container(
+         margin:const EdgeInsets.only(bottom: 20.0),
+         child:
+          
+          UtilityWidgets.broadCustomTextField(_confirmPasswordController,symbol: '',hint: "Confirm password",obscureText: !_confirmPasswordVisibility,enableTrailingIcon: true,iconAction: (){
+            setState(() {
+              _confirmPasswordVisibility = !_confirmPasswordVisibility;
+            });
+          },trailingIcon: !_confirmPasswordVisibility ? Feather.eye_off : Feather.eye, onChanged: (String confirmPassword){
+                       
+              
+                 },),
+   ),
+  
+  
+  
    Container(
      margin:const EdgeInsets.only(bottom: 30.0),
      child: UtilityWidgets.customConfirmationButton(
        context,()async{
+
              if(_otpController.text.trim().length != 6){
+               setState(() {
+                 validationError  = 'Invalid verification code';
+               });
                return;
              }
+            if(_passwordController.text.trim() != _confirmPasswordController.text.trim() ){
+
+                  setState(() {
+                  validationError = 'Password and confirm password not the same.';
+                });
+              return; 
+            } 
+
+              if( _passwordController.text.trim().length < 8 ){
+                setState(() {
+                  validationError = 'Password invalid.(must be atleast eight characters)';
+                });
+              return; 
+              }
+
             UtilityWidgets.requestProcessingDialog(context);
-         var res = await _authModel.verifyOTP(phoneNumber:_userModel.getUser.phoneNumber.trim(),otp:_otpController.text.trim(),firebaseUid: _userModel.getUser.firebaseUid,flag: Constants.IS_CUSTOMER_PHONE_VERIFICATION);
+         var res = await _authModel.updateUserPassword(phoneNumber:_userModel.getUser.phoneNumber.trim(),code:_otpController.text.trim(),firebaseUid: _userModel.getUser.firebaseUid,newPassword:_passwordController.text.trim());
          
          
            if(Navigator.canPop(context)){
               Navigator.pop(context);
            }
-           if(!res["result"]){
-                 UtilityWidgets.requestErrorDialog(context, title: "Verification",desc: res['desc'],cancelAction: (){
+           if(!res!["result"]){
+                 UtilityWidgets.requestErrorDialog(context, title: "Password Update ",desc: res['desc'],cancelAction: (){
                       if(Navigator.canPop(context)){
                             Navigator.pop(context);
                         }
@@ -139,53 +218,12 @@ final TextEditingController _otpController = TextEditingController();
            }
 
 
-              if(widget.hasCustomAfterVerification){
-                widget.customAfterVerification!();
-              }
-     
-     // automatically send email verification once the otp has being verified
-       _authModel.sendEmailVerification();
+    
+          Navigator.pushNamedAndRemoveUntil(context, Constants.PASSWORD_UPDATED_SUCCESSFULLY_ROUTE, (route) => false);
+                          
 
-      String userRole = _userModel.getUser.userRole;
-
-
-      // link is false then that means the email has already being verified.
-        if(userRole == Constants.COURIER_SERVICE_DIRECTOR_ROLE){
-            Navigator.pushNamedAndRemoveUntil(context, Constants.WELCOME_ROUTE, (route) => false);
-            return;
-        }
-          UtilityWidgets.transactionProcessingDialog(context,title:'Checking company information');
-     res = await register<CompanyModel>().getCompanyStaff(userRole: _userModel.getUser.userRole,firebaseUid: _userModel.getUser.firebaseUid);
-
-        // remove the request processing dialog 
-        Navigator.pop(context);
-
-       if(!res['result']){
-         UtilityWidgets.requestErrorDialog(context,title:'Request ',desc: 'Error, processing request tap okay to proceed.',cancelAction: (){
-           Navigator.pop(context);
-           Navigator.pushNamedAndRemoveUntil(context, Constants.WAITING_DIRECTOR_AUTHORIZATION_ROUTE, (route) => false);
-         },cancelText: 'Ok');
-       }
-
-       if(res['data'] == null){
-         UtilityWidgets.getToast('Company information not found. Please ask the director to add your information.',duration:'2',);
-        
-         Navigator.pushNamedAndRemoveUntil(context,Constants.WAITING_DIRECTOR_AUTHORIZATION_ROUTE,(route) => false);
-         return;
-
-       }
-
-      String route = Constants.UNKNOWN_ROUTE;
-       if(userRole == Constants.COURIER_SERVICE_BRANCH_MANAGER_ROLE){
-         route = Constants.COURIER_SERVICE_BRANCH_MANAGER_HOME_ROUTE;
-       }else{
-         route = Constants.COURIER_SERVICE_BRANCH_OFFICE_PERSONEL_HOME_ROUTE;
-       }
-
-       Navigator.pushNamedAndRemoveUntil(context, route, (route) => false);
-
-
-       },confirmationText: "VERIFY", isLong: true, isDisabled: !confirmButtonActivation
+          
+          },confirmationText: "Update Password", isLong: true, 
      )
    ),
    InkWell(
@@ -203,7 +241,7 @@ final TextEditingController _otpController = TextEditingController();
         UtilityWidgets.requestProcessingDialog(context,title: 'Sending OTP Code');
 
        
-         var res = await _authModel.sendOTPCode(phoneNumber:_userModel.getUser.phoneNumber);
+         var res = await _authModel.sendCodeToRestPassword(phoneNumber:_userModel.getUser.phoneNumber);
         
            if(Navigator.canPop(context)){
               Navigator.pop(context);

@@ -31,6 +31,40 @@ class UtilityWidgets{
 
 
 
+static appButton({title = '',onTap}){
+
+  return InkWell(onTap: onTap,child:  Container(
+              width: 130,
+              height:50 ,
+              alignment: Alignment.center,
+              padding:const EdgeInsets.symmetric(vertical: 10.0,horizontal: 8.0),
+              decoration: BoxDecoration(
+                border: Border.all(width: 1.0,color:const Color(0xFFf7c357)),
+                borderRadius:  BorderRadius.circular(25),
+                gradient:const LinearGradient(
+      colors: [Color(0xFFf7c357),Color(0xFFfea23c)],
+      stops: [0.1,0.9],
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
+                                     ),
+                                   ),
+                                   child: SizedBox(
+                                     width: 130.0,
+                                     height: 50.0,
+                                     child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                           Text( title,style: const TextStyle(color: white,fontSize: 12.5,fontWeight: FontWeight.bold)),
+                         
+                        
+                        ],
+                                     ),
+                                   ),
+                                 ),
+          );
+}
+
 static copyrightWidget(width){
   return  Container(
                  width: width,
@@ -587,44 +621,52 @@ disableAction();
 }
   
  static requestProcessingDialog(context,
-      {title = 'Processing...', screenWidth}) {
-    return showGeneralDialog(
-      context: context,
-      transitionDuration: Duration(milliseconds: 400),
-      barrierLabel: 'processing',
-      pageBuilder: (context, anim1, anim2) {
-        return AbsorbPointer(
-          absorbing: true,
-          child: AlertDialog(
-            contentPadding: EdgeInsets.fromLTRB(24.0, 00.0, 24.0, 0.0),
-            insetPadding: EdgeInsets.symmetric(horizontal: 10.0),
-            content: Container(
-              height: 80.0,
-              color: Color(0xFFFEFEFC),
-              child: Row(children: [
-                Container(
-                    height: 125.0,
-                    margin: const EdgeInsets.only(right: 15.0),
-                    child: Image.asset(Constants.LOADING_SPINNER,
-                        fit: BoxFit.cover)),
-                Container(
-                  width: screenWidth != null ? screenWidth * 0.6 : null,
-                  child: Text(title, style: TextStyle(color: warmPrimaryColor)),
-                ),
-              ]),
-            ),
+      {title = 'Processing...',duration = 400}) {
+    showGeneralDialog(
+    context: context,
+    transitionDuration:Duration(milliseconds: duration),
+    barrierLabel: "Processing",
+    pageBuilder: (context,anim1,anim2){
+
+    return AlertDialog(
+    contentPadding: EdgeInsets.fromLTRB(24.0,00.0,24.0,0.0),
+    insetPadding: EdgeInsets.symmetric( horizontal: 10.0),
+      content: 
+              Container(
+          
+           height: 80.0,
+          color: Color(0xFFFEFEFC),
+          child: 
+          Row(
+            children: [
+          Container(width: 25.0,height:125.0,margin: EdgeInsets.only(right: 15.0),child:Image.asset("assets/images/loader-2.gif", fit:BoxFit.cover)),
+          Container(
+            child: Text(title, style: TextStyle(color: warmPrimaryColor)),
           ),
-        );
-      },
-      barrierDismissible: false,
-      barrierColor: Colors.black.withOpacity(0.5),
-      transitionBuilder: (context, anim1, anim2, child) {
-        return FractionalTranslation(
-          translation: Offset(0, 1 - anim1.value),
-          child: child,
-        );
-      },
-    );
+          ]),
+        ),
+     
+          
+       
+       
+       );
+    },
+    barrierDismissible: false,
+    barrierColor: Colors.black.withOpacity(0.5),
+    transitionBuilder: (context,anim1,anim2,child){
+    
+      
+  return FractionalTranslation(
+    translation: Offset(0, 1 - anim1.value),
+    child: child,
+  );
+      
+    },
+   
+  );
+
+
+
   }
 
  static broadRequestProcessingDialog(context,
