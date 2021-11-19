@@ -1,7 +1,6 @@
 
 import 'dart:ui';
-
-import 'package:doorstep_delivery/constants.dart';
+import 'package:doorstep_delivery/constants/constants.dart';
 import 'package:doorstep_delivery/model_registry.dart';
 import 'package:doorstep_delivery/services/models/auth_model.dart';
 import 'package:doorstep_delivery/services/models/courier_company_model.dart';
@@ -31,14 +30,14 @@ class _WaitingCompanyAuthorizationRouteState extends State<WaitingCompanyAuthori
   
   late double _w;
   late double _h;
-  late UserModel _userModel;
+  late DeliveryPersonelModel _deliveryPersonelModel;
   late bool showLoadingIndicator;
 
 
 
   @override
   void initState() {
-     _userModel  =register<UserModel>();
+     _deliveryPersonelModel  =register<DeliveryPersonelModel>();
     showLoadingIndicator = false;
     super.initState();
    
@@ -50,7 +49,7 @@ class _WaitingCompanyAuthorizationRouteState extends State<WaitingCompanyAuthori
 
     _w = MediaQuery.of(context).size.width;
     _h = MediaQuery.of(context).size.height;
-    return BaseView<CompanyModel>(
+    return BaseView<DeliveryPersonelModel>(
       
       isBlankBaseRoute: true,
       child:SizedBox(
@@ -126,10 +125,10 @@ class _WaitingCompanyAuthorizationRouteState extends State<WaitingCompanyAuthori
                  child: Container(
                  
                    width: _w * 0.9,
-                   height: _h * 0.42,
+                   height: _h * 0.43,
                    padding:const EdgeInsets.symmetric(vertical: 15.0,horizontal: 15.0),
                    child:Column(children: [
-                   Text(_userModel.getUser.userRole,style:const TextStyle(color: brightMainColor, fontSize: 14.5,fontWeight: FontWeight.bold)),
+                   const Text('Delivery Personel',style: TextStyle(color: brightMainColor, fontSize: 14.5,fontWeight: FontWeight.bold)),
                      
 
                       Container(
@@ -137,7 +136,7 @@ class _WaitingCompanyAuthorizationRouteState extends State<WaitingCompanyAuthori
                        child:  RichText(text: TextSpan(
                          children: [
                            const TextSpan(text: 'staff: ',style: TextStyle(color: fadedHeadingsColor,fontSize: 12.5)),
-                           TextSpan(text: _userModel.getUser.fullname,style:const TextStyle(color: warmPrimaryColor,fontSize: 14.5,fontWeight: FontWeight.bold))
+                           TextSpan(text: _deliveryPersonelModel.getDeliveryPersonel.deliveryPersonelName,style:const TextStyle(color: warmPrimaryColor,fontSize: 14.5,fontWeight: FontWeight.bold))
                          ]
                        )) ,
                      ),
@@ -150,12 +149,12 @@ class _WaitingCompanyAuthorizationRouteState extends State<WaitingCompanyAuthori
                        child: Text("${DateTime.now().day} - ${monthFormator(DateTime.now().month)}",style: const TextStyle(color: white,fontSize: 13.0))
                      ),
 
-                  managerDetailWidget(title: 'name',desc:_userModel.getUser.fullname),
-                  managerDetailWidget(title: 'email',desc:_userModel.getUser.email),
-                  managerDetailWidget(title: 'phone',desc:_userModel.getUser.phoneNumber),
-                  managerDetailWidget(title: 'Town',desc:_userModel.getUser.townOrCity),
-                  managerDetailWidget(title: 'D.O.B',desc:_userModel.getUser.dateOfBirth),
-                  managerDetailWidget(title: 'Address',desc:_userModel.getUser.address),
+                  deliveryPersonelInfoWidget(title: 'Name',desc:_deliveryPersonelModel.getDeliveryPersonel.deliveryPersonelName),
+                  deliveryPersonelInfoWidget(title: 'Email',desc:_deliveryPersonelModel.getDeliveryPersonel.deliveryPersonelEmail),
+                  deliveryPersonelInfoWidget(title: 'Phone',desc:_deliveryPersonelModel.getDeliveryPersonel.deliveryPersonelPhone),
+                  deliveryPersonelInfoWidget(title: 'Town',desc:_deliveryPersonelModel.getDeliveryPersonel.deliveryPersonelTownOrcity),
+                  deliveryPersonelInfoWidget(title: 'Company Branch',desc:_deliveryPersonelModel.getDeliveryPersonel.branchName),
+                  
                    ],) ,
                  ),
                ),
@@ -164,6 +163,8 @@ class _WaitingCompanyAuthorizationRouteState extends State<WaitingCompanyAuthori
              
                 ],
               ),     
+
+             const SizedBox(height: 20),
         MirrorAnimation<double>(
           tween: Tween(begin: 0.0,end: 1.0),
           duration:const Duration(seconds: 1),
@@ -176,7 +177,7 @@ class _WaitingCompanyAuthorizationRouteState extends State<WaitingCompanyAuthori
               color: Colors.transparent,
               shadowColor: black.withOpacity(0.45),
               child:
-                      ScopedModelDescendant<CompanyModel>(
+                      ScopedModelDescendant<DeliveryPersonelModel>(
                      
                         builder: (context, widget,model) {
                           return InkWell(
@@ -185,7 +186,7 @@ class _WaitingCompanyAuthorizationRouteState extends State<WaitingCompanyAuthori
                             setState(() {
                               showLoadingIndicator = true;
                             });
-                         Map<String,dynamic> res =   await  model.getCompanyStaff(userRole: _userModel.getUser.userRole,firebaseUid: _userModel.getUser.firebaseUid); 
+                         Map<String,dynamic> res =   await  model.getDeliveryPersonelInfo(firebaseUid: _deliveryPersonelModel.getDeliveryPersonel.deliveryPersonelID); 
                          
                            setState(() {
                               showLoadingIndicator = false;
@@ -229,7 +230,7 @@ class _WaitingCompanyAuthorizationRouteState extends State<WaitingCompanyAuthori
                                                       Row(
                                                         mainAxisAlignment: MainAxisAlignment.center,
                                                         children: [
-                                                          const Text('CHECK AUTHORIZATION', style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12.0,color: white )),
+                                                          const Text('check authorization', style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12.0,color: white )),
                                                         const  SizedBox(width: 15.0),
                                                            Visibility(visible:showLoadingIndicator,child: loadingIndicator(valueColor: white))
                                                                            
@@ -263,7 +264,7 @@ class _WaitingCompanyAuthorizationRouteState extends State<WaitingCompanyAuthori
 
 
 
-  Widget managerDetailWidget({title = '',desc = ''}){
+  Widget deliveryPersonelInfoWidget({title = '',desc = ''}){
     return Container(
       margin:const EdgeInsets.only(bottom: 11.5),
       child: Row(
@@ -271,25 +272,20 @@ class _WaitingCompanyAuthorizationRouteState extends State<WaitingCompanyAuthori
         children: [
           
              Container(
-              //width:,
               margin:const EdgeInsets.only(left: 20.0),
               child: Text(title, style:const TextStyle(color: Color(0xFFC0C0C0),fontSize: 14.0))
             ),
-        
-       
-        
-
-          Container(
-            width: _w * 0.5,
+           Container(
+            width: _w * 0.45,
             alignment: Alignment.centerRight,
-            //width: desc.length > 20 ? 120 : null,
-           // margin: EdgeInsets.only(left: 10.0,right: 10.0),
             child: Text(desc,overflow: TextOverflow.ellipsis,style:const TextStyle(color:warmPrimaryColor,fontWeight: FontWeight.bold)),
           ),
         ],
       ),
     );
   }
+
+
   Widget dot({double size = 5,color}){
     return Container(
       margin:const EdgeInsets.only(bottom: 10.0),

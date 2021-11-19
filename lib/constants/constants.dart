@@ -88,19 +88,17 @@ Constants{
   // NETWORK REQUESTS FLAG
   static const String SEND_OTP_NETWORK_REQUEST_FLAG = '1';
   static const String VERIFY_OTP_NETWORK_REQUEST_FLAG = '2';
-  static const String SEND_RESET_PASSWORD_OTP_CODE_NETWORK_REQUEST_FLAG = '13';
   static const String FETCH_USER_PASSWORD_NETWORK_REQUEST_FLAG = '5';
   static const String DELETE_COMPANY_STAFF_NETWORK_REQUEST_FLAG = '9';
   static const String ADD_COMPANY_BRANCH_MANAGER_NETWORK_REQUEST_FLAG = '8';
   static String ADD_COMPANY_BRANCH_OFFICE_PERSONEL_NETWORK_REQUEST_FLAG = '10';
+   static String ADD_COMPANY_BRANCH_DELVIERY_PERSONEL_NETWORK_REQUEST_FLAG = '14';
+    static String DELETE_COMPANY_BRANCH_DELIVERY_PERSONEL_NETWORK_REQUEST_FLAG = '15';
   static const String DELETE_COMPANY_BRANCH_OFFICE_PERSONEL_NETWORK_REQUEST_FLAG = '11';
-    static const String UPDATE_USER_PASSWORD_NETWORK_FLAG = '12';
-  static const String UPDATE_PRIVILEDGE_NETWORK_REQUEST_FLAG = '30';
+    static const String UPDATE_PRIVILEDGE_NETWORK_REQUEST_FLAG = '30';
 
-
-  // FIREBASE STORAGE DIRECTORIES
-  static const String USER_AVATARS_FIREBASE_STORAGE_DIRECTORY = 'user_avatars';
-
+  //FIREBASE STORAGE DIRECTORIES
+    static const String USER_AVATARS_FIREBASE_STORAGE_DIRECTORY = 'user_avatars';
 
 
  //ASSETS SUBDIRECTORIES
@@ -116,12 +114,23 @@ static const String COURIER_MANAGER_ICON = "${IMAGES}user.png";
 static const String COURIER_SENDING_AGENT_ICON = "${IMAGES}user.png";
 static const String COURIER_RECEIVING_AGENT_ICON = "${IMAGES}user.png";
 static const List<String>  PARCEL_ICONS = ["${IMAGES}parcel_first_color.png", "${IMAGES}parcel_second_color.png", "${IMAGES}parcel_3_color.png", "${IMAGES}parcel_4_color.png", "${IMAGES}parcel_5_color.png", "${IMAGES}parcel_6_color.png","${IMAGES}parcel_7_color.png"];
-static const String LOADING_SPINNER = '${IMAGES}spinner.gif';
+static const String LOADING_SPINNER = '${IMAGES}loader-2.gif';
 static const String YELLOW_PARCEL_ICON_PATH = '${IMAGES}yellow_parcel_icon.png';
 static const String OPENED_ENVELOP_ICON = '${IMAGES}opened_envelop.png';
 static const String DELIVERY_TRUCK_ICON = '${IMAGES}envelop.png';
-  static const String PARCEL_SIZE_7 ='${IMAGES}parcel_size_7.png';
+static const String PARCEL_SIZE_7 ='${IMAGES}parcel_size_7.png';
+static const String NO_BRANCH_ADDED_ICON ='${IMAGES}no_branch_added.png';
+static const String DELIVERY_BIKE_ICON = '${IMAGES}delivery_bike_icon.png';
+static const String DOORSTEP_LOGO_PATH = '${IMAGES}doorstep_logo.png';
 
+
+
+  // Delivery Personel Constants
+  static const String DELIVERY_PERSONEL_STATUS_IDLE = 'idle';
+
+
+  // Parcel Delivery constants
+  static const String PARCEL_DELIVERY_STATUS_EN_ROUTE = 'en route';
 
 
 
@@ -133,7 +142,7 @@ static const String DELIVERY_TRUCK_ICON = '${IMAGES}envelop.png';
     static const String CUSTOM_MAP_STYLE_FILE_PATH = 'assets/data/maps_style.json';
     
 // Extras
-static const String UNIQUE_STRING = "jfalkkakfjaklsfjksfajklsjfdkajflkjaslkjflaskjfalfjlkasjfklkiieuyr";
+static const String UNIQUE_STRING = "jfalkkakfjaklsfj";
 
 
 // allowed towns and cities
@@ -204,35 +213,30 @@ static const List<String> ALLOWED_TOWN_OR_CITIES = ['Accra','Kumasi','Tamale','T
   static const String  COURIER_SERVICE_DIRECTORS_COLLECTION_NAME = 'directors';
   static const String COURIER_SERVICE_BRANCH_MANAGERS_COLLECTION_NAME = 'branch_managers';
   static const String COURIER_SERVICE_OFFICE_PERSONEL_COLLECTION_NAME = 'office_personel';
-  static String COURIER_SERVICE_DELIVERY_PERSONEL_COLLECTION_NAME = 'delivery_personel';
-  static const String CUSTOMERS_COLLECTION_PATH = 'customers/customers_profiles';
+  static const String COURIER_SERVICE_DELIVERY_COLLECTION_NAME = 'delivery_personel';
+  static const String CUSTOMERS_COLLECTION_PATH = '${ROOT_APP_COLLECTION_NAME}customers/customers_profiles';
   static const  String COURIER_STAFF_COLLECTION_NAME = 'staffs_profiles';
   static const String COURIER_SERVICE_BRANCH_OFFICERS_COLLECTION_NAME = 'branch_officers';
-  static const String COURIER_SERVICE_BRANCH_DESTINATIONS_COLLECTION_NAME = 'branch_destination';
+  static const String COURIER_SERVICE_BRANCH_DESTINATIONS_COLLECTION_NAME = 'branch_destinations';
 
   static const  String ADD_COMPANY_BRANCH = '6';
 
 
-    static const String RE_AUTH_ROUTE = '/re_auth_route';
+  static const String RE_AUTH_ROUTE = '/re_auth_route';
   static const String COMPANY_ADDITION_SUCCESS_ROUTE = 'company_addition_success_route';
   static const String SELECT_LOCATION_ON_MAP_ROUTE = '/select_location_on_map_route';
-
   static const String COMPANY_LOGO_FILES_DIR = 'company_logo_files_dir';
 
 
-
-  // CUSTOMER ROLE
+    // CUSTOMER ROLE
   static const String CUSTOMER_ROLE = 'customer';
 
-  // COURIER SERVICE ROLES
   static const String COURIER_SERVICE_DIRECTOR_ROLE = 'Courier Company Director';
 
   static const String COURIER_SERVICE_BRANCH_MANAGER_ROLE = 'Courier Company Branch Manager';
 
- 
+  static const String DELIVERIES_ROUTE = '/deliveries_route';
   static const String COURIER_SERVICE_BRANCH_OFFICE_PERSONEL_ROLE = 'Courier Company Officer';
-  
-  static const String COURIER_SERVICE_DELIVERY_PERSONEL_ROLE  = 'Delivery Personel';
 
   static const String HOUR_GLASS_ICON = '${IMAGES}hour_glass.png';
 
@@ -245,8 +249,16 @@ static const List<String> ALLOWED_TOWN_OR_CITIES = ['Accra','Kumasi','Tamale','T
   static const String ALL_MANAGERS_ROUTE = '/all_managers_route';
   static const String ALL_OFFICE_STAFFS_ROUTE = '/all_office_staffs_route';
   static const String ALL_DELIVERY_STAFFS_ROUTE = 'all_delivery_staffs_route';
+  static const String BILL_DETAILS_CONFIRMATION_ROUTE = '/bill_details_confirmation_route';
+  static const String ACCOUNT_TOP_UP_SUCCESS_ROUTE = '/account_top_up_success_route';
+  static const String DIRECTOR_PROFILE_ROUTE = '/director_profile_route';
+
+
+  static const String COMPANY_BRANCHES_ROUTE = '/company_branches_route';
   
   static const String UNKNOWN_ROUTE = '/unknown_route';
+  static const String ACCOUNT_TOP_UP_ROUTE = '/account_top_up_route';
+  static const String BILL_PAYMENT_SUCCESS = '/bill_payment_success';
 
   static const String REQUEST_TYPE_SEND_OTP_CODE = '1';
 
@@ -277,7 +289,56 @@ static const List<String> ALLOWED_TOWN_OR_CITIES = ['Accra','Kumasi','Tamale','T
     static const String OVERALL_COMPANY_STAFF_STATS = 'stats/company_staff_stats';
   static const String DAILY_PARCELS_STATS_COLLECTION_NAME = '__daily_parcels_stats';
 
-  static const String NO_BRANCH_ADDED_ICON ='${IMAGES}no_branch_added.png';
+  static const String DELIVERY_PERSONELS_ROUTE = '/delivery_personels_route';
+
+  static const String PARCEL_DELIVERY_REQUESTS_ROUTE = '/parcel_delivery_requests_route';
+
+  static const String PARCELS_STATISTICS_ROUTE = '/parcels_statistics_route';
+
+  static const String USAGE_AND_BILLING_ROUTE           = '/usage_and_billing_route';
+
+  static const String REVIEWS_ROUTE           = '/reviews_route';
+
+  static const String INVITE_A_FRIEND          = '/invite_a_friend';
+
+  static const String CEDI_SYMBOL = '₵';
+
+  static const String DIRECTORS_ROUTE = '/directors_route';
+
+  static const String DELIVERY_VEHICLE_CHOICE_TYPE_BIKE = 'Motorbike';
+
+  static const String DELIVERY_VEHICLE_CHOICE_TYPE_CAR = 'Car';
+
+  static const String DELIVERY_VEHICLE_CHOICE_TYPE_VAN = 'Van';
+
+   static const String DELIVERY_PERSONEL_OFFLINE_STATE = 'offline';
+  static const String DELIVERY_PERSONEL_IDLE_STATE = 'Idle';
+  static const String DELIVERY_PERSONEL_BUSY_STATE = 'busy';
+  static const String DELIVERY_PERSONEL_COMPLETED_STATE = 'completed';
+
+
+  static const String COURIER_SERVICE_ACTIVE_DELIVERIES_DOC_PATH = 'active_deliveries/deliveries';
+
+  static const String PARCEL_DELIVERY_REQUEST_STATUS_PLACED = 'request_placed';
+  static const String PARCEL_DELIVERY_REQUEST_STATUS_ACCEPTED = 'request_accepted';
+  static const String PARCEL_DELIVERY_REQUEST_STATUS_REJECTED = 'request_rejected';
+  static const String PARCEL_DELIVERY_REQUEST_STATUS_CANCELLED = 'request_cancelled';
+
+
+  static const String PARCEL_DELIVERY_STATUS_PARCEL_PICKED_UP = 'parcel_picked_up';
+  static const String PARCEL_DELIVERY_STATUS_PARCEL_IN_TRANSIT = 'parcel_in_transit';
+  static const String PARCEL_DELIVERY_STATUS_PARCEL_PROCESSING_INITIATEd = 'parcel_processing_initiated';
+  static const String PARCEL_DELIVERY_STATUS_PARCEL_PROCESSING_COMPLETED  = 'parcel_processing_completed';
+  static const String PARLCEL_DELIVERY_STATUS_PARCEL_IN_FINAL_TRANSIT = 'parcel_in_transit';
+  static const String PARCEL_DELIVERY_STATUS_COMPLETED = 'completed';
+
+  static const String COURIER_SERVICE_DELIVERY_PERSONEL_ROLE = 'Delivery Personel';
+
+  static const String SEND_RESET_PASSWORD_OTP_CODE_NETWORK_REQUEST_FLAG = '13';
+
+  static const String ARROW_RIGHT = '→';
+
+  static const String UPDATE_USER_PASSWORD_NETWORK_FLAG = '12';
 
   
 
@@ -290,6 +351,33 @@ static const List<String> ALLOWED_TOWN_OR_CITIES = ['Accra','Kumasi','Tamale','T
 
 
   
+
+  
+ 
+
+
+ 
+
+
+
+
+  
+
+  
+ 
+
+
+
+
+
+
+
+
+
+  
+
+
+
 
 
 

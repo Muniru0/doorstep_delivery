@@ -2,10 +2,11 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doorstep_delivery/constants.dart';
-import 'package:doorstep_delivery/services/company_service.dart';
+
+import 'package:doorstep_delivery/constants/constants.dart';
+import 'package:doorstep_delivery/services/delivery_personel_service.dart';
 import 'package:doorstep_delivery/services/data_models/branch_managers_data_model.dart';
-import 'package:doorstep_delivery/services/data_models/branch_office_personel_data_model.dart';
+import 'package:doorstep_delivery/services/data_models/branch_delivery_personel_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/company_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/user_data_model.dart';
 import 'package:doorstep_delivery/services/firebase_storage_uploader.dart';
@@ -22,7 +23,7 @@ class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
- final  CompanyService _companyService = CompanyService();
+ final  DeliveryPersonelService _deliveryPersonelService = DeliveryPersonelService();
   
 
     // send otp 
@@ -122,7 +123,7 @@ class AuthService {
 
 
      // signup the user with email and password   
-    Future<Map<String,dynamic>> signupUserWithEmailAndPassword({ String email = '',String password = '',String fullname = '',String phoneNumber = '',dateOfBirth = '',String userRole = '', String gender = '', String townOrCity = '', String address = '',required File userAvatarFile
+    Future<Map<String,dynamic>> signupUserWithEmailAndPassword({ String email = '',String password = '',String fullname = '',String phoneNumber = '',dateOfBirth = '',String userRole = '', String gender = '', String townOrCity = '', String address = '',required File userAvatarFile,required String deliveryVehicleType,required String deliveryVehicleBrand,required String deliveryVehicleModel, required String deliveryVehicleRegistrationNumber
         }) async {
     
        
@@ -135,6 +136,8 @@ class AuthService {
               }
               
           newUser.updateDisplayName(fullname);
+
+          
             
         
      Map<String,dynamic> uploadRes = await  FirebaseFileUploader().uploadFile(userAvatarFile,remoteDir:Constants.USER_AVATARS_FIREBASE_STORAGE_DIRECTORY);
@@ -148,12 +151,13 @@ class AuthService {
        
 
   
-            String processedUrl = Uri.encodeComponent((uploadRes['data'].split('%2F').join('dhuhgk')));
-                
+            String processedUrl =FirebaseFileUploader().fromDownloadLinkToString(uploadRes['data']);
+                // Uri.encodeComponent((uploadRes['data'].split('%2F').join(Constants.UNIQUE_STRING)))
             MyUser userObj = MyUser(fullname: fullname,avatarUrl:processedUrl,userRole: userRole,email: email,password: password,phoneNumber: phoneNumber,dateOfBirth: dateOfBirth,gender: gender,address: address,townOrCity: townOrCity,);
            
             Map<String,dynamic> userObjMap = userObj.toMap();
-        userObjMap['id_token'] =  await newUser.getIdToken();
+           userObjMap['id_token'] =  await newUser.getIdToken();
+
                
           Map<String,dynamic> res =  await ServerRequests.sendNetworkRequest(Constants.STORE_NEW_USER_DATA,params:userObjMap);
           
@@ -168,7 +172,14 @@ class AuthService {
         
           
           // store the user's info in persistant storage
-          await SharedPref.storeUser(userObj);
+          await SharedPref.storeDeliveryPersonel(DeliveryPersonel(
+            branchDeliveryPersonelAvatarUrl: userObj.avatarUrl,
+            deliveryPersonelEmail: userObj.email,
+            deliveryPersonelID: userObj.firebaseUid,
+            deliveryPersonelName: userObj.fullname,
+            deliveryPersonelGender: userObj.gender,
+            deliveryPersonelPhone: userObj.phoneNumber,
+            ));
 
           // store not to show the user's onboarding route
           await SharedPref.updateSettings({'show_onboarding': false});
@@ -358,7 +369,7 @@ class AuthService {
 
 
               // declare and initialize the signIn results map
-              Map<String,dynamic> signInResultantMap = {'result': true,'phone_verification': false,'user_obj': null,'company_obj': null,'director_phone_verification': null,'company_phone_verification': null};
+              Map<String,dynamic> signInResultantMap = {'result': true,'phone_verification': false,'delivery_personel_obj': null,'company_obj': null,'director_phone_verification': null,'company_phone_verification': null};
 
              // get the auth claims
              Map<String,dynamic> authClaimsRes = await getUserAuthClaimns();
@@ -408,56 +419,43 @@ class AuthService {
 
                 // remove the password from entry from the users doc
                 userDoc[MyUserDataModel.PASSWORD] = '';
-              
-                myPrint(userDoc);
-                // create a userObj from the user doc
-                MyUser _myUser = MyUser.fromMap(userDoc);
-
-                // store the user data locally
-               await SharedPref.storeUser(_myUser);
-
-                // store the submitted password in secure store
-                // because the there is no local data on the system.
+           
+                
+                // locally persists the user password
                 await SecureStorage.storePassword(password);
 
                 
-                // add the user obj to the signin results map
-                signInResultantMap['user_obj'] = _myUser; 
-
                 
+                  String companyDocID = '';
             
-
-              String companyDocID = '';
-            
-            // convert the staff doc into a staff obj
-            
-              Map<String,dynamic> staffDocRes = await  _companyService.getCompanyStaff(_myUser.firebaseUid);
+                    // convert the staff doc into a staff obj
+                    Map<String,dynamic> staffDocRes = await  _deliveryPersonelService.getDeliveryPersonelInfo(MyUser.fromMap(userDoc).firebaseUid);
 
                     if(staffDocRes['result'] && staffDocRes['data'] != null){
-                      companyDocID = DeliveryPersonel.fromMap(staffDocRes['data']).companyDocID;
+
+                      DeliveryPersonel _deliveryPersonelObj =  DeliveryPersonel.fromMap(staffDocRes['data']);
+                      signInResultantMap['delivery_personel_obj'] = _deliveryPersonelObj;
+                      await SharedPref.storeDeliveryPersonel(_deliveryPersonelObj);
+
+                      companyDocID = _deliveryPersonelObj.companyDocID;
                     }
                 
                    
                     
-                
-                
-
-
-
                 // fetch the company of staff and update the last signin time if the 
                 // company exists
                 if(companyDocID.isNotEmpty){
 
                       
                           // fetch the company's document using the id from above
-                    Map<String,dynamic>  companyMap =  await _companyService.getCompanyWithID(companyDocID); 
-                              
-                       if(companyMap['result']){    
-                               
-                              SharedPref.storeCompany(companyMap['data']);
-                              signInResultantMap['company_obj'] = companyMap['data'];
-                              
-                              }
+                    Map<String,dynamic>  companyMap =  await _deliveryPersonelService.getCompanyWithID(companyDocID); 
+                                  
+                          if(companyMap['result']){    
+                                  
+                                  SharedPref.addCompany(companyMap['data']);
+                                  signInResultantMap['company_obj'] = companyMap['data'];
+                                  
+                                  }
                 
                  } 
                  
@@ -469,6 +467,8 @@ class AuthService {
           return  {'result': false, 'desc': 'UnIdentified error, please try again.'};
         
       }
+
+
     return signInResultantMap;
       
       
@@ -602,7 +602,7 @@ class AuthService {
 
 
 // reauthenticate the user with password
-  Future<Map<String,dynamic>> reauthenticateUserWithPassword(String password ,String userRole,{String companyDocID = ''} ) async{
+  Future<Map<String,dynamic>> reauthenticateUserWithPassword(String password ,{String companyDocID = ''} ) async{
 
 
       try{
@@ -620,44 +620,37 @@ class AuthService {
             return confirmUserPasswordRes;
         }
 
+        if(companyDocID.isNotEmpty){
+         
+          return {'result':true,'data': 'success'};
+        }
 
-         if(companyDocID.isNotEmpty){
-           myPrint('entered the not empty company doc ',heading: 'company doc not empty');
-              return {'result':true,'data': 'success'};
-            }
+
+         
 
          // look for the users record among the companies.
-        Map<String,dynamic>   res =  await _companyService.getCompanyStaff(_user.uid);
-    // if the result positive
-    if(res['result']){
+       var res =  await _deliveryPersonelService.getDeliveryPersonelInfo(_user.uid);
+         
+          if(res['result'] && res['data'].isNotEmpty){
+            return {'result': true,'data': DeliveryPersonel.fromMap(res['data'])};
+          }
+
+          return {'result':true ,'desc': {}};
+
+    
           
-          // if the staff does not have a company record
-            if(res['data'] == null){
 
-              // return the results as they are
-              return res;
-            }
+      
 
-         // fetch the company data and persist the data locally
-              res =  await _companyService.getCompanyWithID(res[""]);
-
-              // if the company data was fetched successfully
-                if(res['result']){
-                  // store the company data locally
-                    await SharedPref.addCompany(res['data']);
-              }
-
-       
-
-
-    }
-      return res;
-          }on FirebaseException catch(e){
+      
+    }on FirebaseException catch(e){
            
-               print( "$e line 573");
-              return {'result':false, 'desc': getFirebaseAuthException(e.code)};
+    print( "$e line 573");
+    return {'result':false, 'desc': getFirebaseAuthException(e.code)};
 
-            }
+      }
+
+
   }
 
 
@@ -666,7 +659,7 @@ class AuthService {
 
     try{
 
-      User? _user = await getCurrentUser();
+      User? _user = getCurrentUser();
 
 
       // if the user has signed-Out
@@ -683,7 +676,7 @@ class AuthService {
       }
      
     // look for the users record among the companies.
-    Map<String,dynamic> res = await _companyService.getCompanyStaff(_user.uid);
+    Map<String,dynamic> res = await _deliveryPersonelService.getDeliveryPersonelInfo(_user.uid);
 
 
     // if the result positive
@@ -697,7 +690,7 @@ class AuthService {
             }
 
          // fetch the company data and persist the data locally
-              res =  await _companyService.getCompanyWithID(res['']);
+              res =  await _deliveryPersonelService.getCompanyWithID(companyDocID);
 
               // if the company data was fetched successfully
                 if(res['result']){
@@ -731,10 +724,10 @@ class AuthService {
       await signOut();
 
       // clear the user data from local storage
-      await SharedPref.storeUser(MyUser());
+      await SharedPref.storeDeliveryPersonel(DeliveryPersonel());
 
       // clear the company data from local storage
-      await SharedPref.storeCompany(Company());
+      await SharedPref.addCompany(Company());
 
       // clear the password stored in Secure Store
       await SecureStorage.storePassword(null);
@@ -770,6 +763,8 @@ class AuthService {
      return 'Please the user credentials are mismatched';
      case 'user-mismatch':
      return 'Please sign-out completely and try again.';
+     case 'requires-recent-login':
+     return 'Please sign-out completely and sign-in to continue.';
 
      default:return 'Authentication failed unexpectedly, please try again later.';
     }

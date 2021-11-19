@@ -2,7 +2,7 @@
 
 import 'dart:math';
 import 'dart:ui' as ui;
-import 'package:doorstep_delivery/constants.dart';
+import 'package:doorstep_delivery/constants/constants.dart';
 import 'package:doorstep_delivery/services/data_models/parcel_data_model.dart';
 import 'package:doorstep_delivery/services/utils/local_auth.dart';
 import 'package:doorstep_delivery/ui/utils/colors_and_icons.dart';
@@ -31,6 +31,62 @@ class UtilityWidgets{
 
 
 
+
+static Widget customAppBar({screenWidth,onTap,secondOnTap,title = ''}){
+  return  PlayAnimation<double>(
+                         tween: Tween(begin: 0.0, end: 1.0),
+                          builder: (context, child,value) {
+                            return Material(
+                              elevation:  2.5 * value,
+                              color: logoBackgroundColor,
+                              child: 
+                              Container(
+                                width: screenWidth,
+                                
+                                padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 20.0),
+                                decoration:const BoxDecoration(
+                                  color: logoBackgroundColor,
+                                  border: Border(bottom: BorderSide(width: 0.75, color: Colors.grey)),
+                                ),
+                                child:
+                                   Row(
+                                    children: [
+                                
+                                        InkWell(
+                                              onTap: (){
+                                            Navigator.pop(context);
+                                              },
+                                          child: Container(
+                                          margin:const EdgeInsets.only(right: 10.0),
+                                          child:const Icon(MaterialIcons.keyboard_arrow_left,size: 18.0),
+                                                                              ),
+                                        ),
+                                    
+                                          Text(title,style:const TextStyle(fontSize: 14.5, fontWeight: FontWeight.bold)),
+                                       const  Expanded(child: SizedBox()),
+
+                                          InkWell(
+                                          onTap:onTap,
+                                          child: Container(
+                                            margin:const EdgeInsets.only(right: 5.6),
+                                            child:const Icon(Feather.search,size: 18,color: logoMainColor)
+                                          ),
+                                        ),
+                                        InkWell(onTap: secondOnTap,
+                                          child:Icon(AntDesign.filter,size: 18,color: logoMainColor)
+                                          
+                                        ),
+                                    ],
+                                  ),
+                                
+                              ),
+                           
+                            );
+                          }
+                        );
+
+
+}
 static appButton({title = '',onTap}){
 
   return InkWell(onTap: onTap,child:  Container(
@@ -65,6 +121,56 @@ static appButton({title = '',onTap}){
           );
 }
 
+ static Widget majorErrorWidget(desc,{double screenWidth = 200.0,String retryText = 'Retry',required VoidCallback onTap}){
+  return  Center(
+                child: Column(
+
+            children: [
+
+                SizedBox(height: 100.0,),
+                SizedBox(
+                  height: 40.0,
+                  child: Icon(AntDesign.warning,color: silverColor,size: 30.0),
+                ),
+
+                Container(
+                  width: screenWidth ,
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(top: 10.0),
+                  height:35.0,
+                  child: Text(desc,style: TextStyle(fontSize: 13.5,fontWeight: FontWeight.bold))
+                ),
+
+                  InkWell(
+                  onTap: onTap,
+                  child: Container(
+                  width: screenWidth,
+                  alignment: Alignment.center,
+                  child:Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        child: Icon(Ionicons.ios_refresh_circle_sharp,color: brightMainColor,size: 30.0)
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 5.0),
+                        child:Text(retryText,style: TextStyle(color: brightMainColor,fontSize: 12.5,fontWeight: FontWeight.bold)),
+                      ),
+                    ]
+                  ),
+                                  ),
+                                ),
+                    
+            ],
+
+          ),
+              );
+        
+}
+
+
+
 static copyrightWidget(width){
   return  Container(
                  width: width,
@@ -86,8 +192,6 @@ static copyrightWidget(width){
                );
                  
 }
-
-
 
 static  refinedInformationDialog( {required BuildContext context, String desc = '', String title = '',required VoidCallback onTap,onTapText = 'Okay', color = brightMainColor, bool barrierDismissible = true}) {
   return showGeneralDialog(
@@ -1283,7 +1387,49 @@ Container(width: 50.0, height:50.0,child:
   }
 
 
-  static doubleButton(title,VoidCallback onTap){}
+ static Widget doubleButton(title,VoidCallback onTap,{screenWidth = 360, Color buttonBackground = logoMainColor, Color textColor = logoMainColor}){
+    return    PlayAnimation<double>(
+                         tween: Tween(begin: 0.0,end: 1.0),
+                         duration: Duration(milliseconds: 700),
+                         curve: Curves.easeInOut,
+                          builder: (context, child,value) {
+                            return InkWell(
+                              onTap:onTap,
+                              child: Container(
+                                  width: screenWidth * 0.9,
+                                  padding:const EdgeInsets.symmetric(vertical: 13.0,horizontal: 15.0),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      color:buttonBackground,
+                                  ),
+                                    child:  
+                                     Material(
+                                elevation: 10.0 * value,
+                                borderRadius: BorderRadius.circular(20.0),
+                                child: Container(
+                                  width: screenWidth * 0.9,
+                                   alignment: Alignment.center,
+                                  padding:const EdgeInsets.symmetric(vertical: 13.0,horizontal: 15.0),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  child: Text(title,style: TextStyle(color:textColor,fontSize: 13.5,fontWeight: FontWeight.bold)),
+                                ),
+                                                ),
+                                                
+                                ),
+                            );
+                          }
+                        );
+                        
+                        
+
+
+  }
+
+
+
+
 
   static requestSuccessDialog(context,
       {title = '', desc = '', duration: 400, cancelAction, cancelText = 'CANCEL'}) {
@@ -1828,7 +1974,7 @@ static overlayChoiceWidget(OverlayChoice _overlayChoice){
                   )),
                    decoration:  BoxDecoration(
                     border: Border(bottom: BorderSide(
-                      width: 2.5, color: _overlayChoice.isLast ? Colors.white : warmSecondaryColor,
+                      width: 2.5, color: _overlayChoice.isLast ? Colors.white : overlayChoiceBorderColor,
                     )),
                   ),
                   ),
@@ -1884,7 +2030,7 @@ return OverlayEntry(
                               )),
                                decoration:const BoxDecoration(
                                 border: Border(bottom: BorderSide(
-                                  width: 2.5, color: warmSecondaryColor,
+                                  width: 2.5, color: overlayChoiceBorderColor,
                                 )),
                               ),
                             ),
@@ -1956,7 +2102,7 @@ return OverlayEntry(
           border: Border(
               bottom: BorderSide(
             width: 2.5,
-            color: _overlayChoice.isLast ? Colors.white : warmSecondaryColor,
+            color: _overlayChoice.isLast ? Colors.white : overlayChoiceBorderColor,
           )),
         ),
       ),
@@ -2013,7 +2159,7 @@ return OverlayEntry(
                               )),
                                decoration: BoxDecoration(
                                 border: Border(bottom: BorderSide(
-                                  width: 2.5, color: warmSecondaryColor,
+                                  width: 2.5, color: overlayChoiceBorderColor,
                                 )),
                               ),
                             ),
@@ -2817,6 +2963,8 @@ return
                               ),
                               onChanged: onChanged,
                             ),
+                         
+                         
                           ),
             
 

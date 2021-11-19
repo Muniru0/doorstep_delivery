@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doorstep_delivery/model_registry.dart';
+import 'package:doorstep_delivery/services/data_models/branch_delivery_personel_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/user_data_model.dart';
 import 'package:doorstep_delivery/services/models/user_model.dart';
 import 'package:doorstep_delivery/ui/routes/app_init_error_route.dart';
@@ -10,6 +12,7 @@ import 'package:doorstep_delivery/ui/routes/onboarding_route.dart';
 import 'package:doorstep_delivery/ui/routes/otp_verification_route.dart';
 import 'package:doorstep_delivery/ui/routes/password_updated_success_route.dart';
 import 'package:doorstep_delivery/ui/routes/re_authentication_route.dart';
+import 'package:doorstep_delivery/ui/routes/settings_route.dart';
 import 'package:doorstep_delivery/ui/routes/signup_route.dart';
 import 'package:doorstep_delivery/ui/routes/test_route.dart';
 import 'package:doorstep_delivery/ui/routes/unknown_route.dart';
@@ -52,8 +55,7 @@ class MyApp extends StatelessWidget {
          future: register<UserModel>().init(),
          builder: (context, snapshot) {
 
-    
-          return const  WaitingCompanyAuthorizationRoute();
+
         
         if (snapshot.hasError) {
           return const AppInitErrorRoute();
@@ -70,6 +72,10 @@ class MyApp extends StatelessWidget {
 
          if (snapshot.connectionState == ConnectionState.done) {
 
+         // return TestRoute();
+           return HomeRoute();
+          // return SettingsRoute(completeDeliveryVehicleInfo: true,);
+
                 //   myPrint(snapshot.data);
                 //  return const TestRoute();
                     Map? snapshotData = snapshot.data! as Map<String,dynamic>;
@@ -80,12 +86,12 @@ class MyApp extends StatelessWidget {
                    
                     Map? res = snapshot.data! as Map<String, dynamic>;
                   
-                    MyUser _user = res['user_data']; 
+                   
                    
                   
                  
                     // if the user is blocked the
-                    if (_user.blocked) {
+                    if (res.containsKey('blocked')) {
                       return BlockedRoute();
                     }
 
@@ -98,7 +104,7 @@ class MyApp extends StatelessWidget {
                       return const OTPVerificationRoute();
                     }
 
-                    if(res['firebase_user'] != null && _user.firebaseUid.isNotEmpty){
+                    if(res['firebase_user'] != null ){
                      
                        return const ReAuthRoute();
                     }

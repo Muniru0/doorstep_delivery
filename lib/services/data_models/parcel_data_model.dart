@@ -1,8 +1,10 @@
 import 'dart:convert';
 
-class ParcelsDataModel {
+class ParcelDataModel {
   static const String USER_DOC_ID = 'user_docID';
   static const String DISPATCH_USER_ID = 'dispatch_user_id';
+  static const String COURIER_SERVICE_DOC_ID = 'courier_service_doc_id';
+  static const String COURIER_SERVICE_NAME   = 'courier_service_name';
   static const String COURIER_SERVICE = 'courier_service';
   static const String COURIER_SELECTION_TYPE = 'courier_selection_type';
   static const String PARCEL_DOC_ID = 'parcelDocID';
@@ -11,11 +13,9 @@ class ParcelsDataModel {
   static const String SENDER_PHONE_NUMBER = 'sender_phone_number';
   static const String RECEIPIENT_FULLNAME = 'receipient_fullname';
   static const String RECEIPIENT_PHONE_NUMBER = 'receipient_phone_number';
-  static const String TRANSIT_PROGRESS = 'transit_progress';
   static const String PARCEL_PRICE = 'parcel_price';
   static const String PARCEL_PAYMENT_STATUS = 'parcel_payment_status';
   static const String PARCEL_SIZE = 'parcel_size';
-  static const String PARCEL_WEIGHT = 'parcel_weight';
   static const String PICKUP_TIME = 'pickup_time';
   static const String PARCEL_DEPOSIT_TIME = 'parcel_deposit_time';
   static const String PARCEL_DEPOSIT_LOCATION = 'parcel_deposit_location';
@@ -43,20 +43,41 @@ class ParcelsDataModel {
   static const String PARCEL_DESTINATION_ADDRESS = 'parcel_destination_address';
   static const String PARCEL_DESTINATION_LAT = 'parcel_destination_lat';
   static const String PARCEL_DESTINATION_LNG = 'parcel_destination_lng';
-  static const String  DATE_CREATED = 'date_created';
+  static const String PARCEL_DESTINATION_STATE = 'parcel_destination_state';
+  static const String PARCEL_DELIVERY_STATUS = 'delivery_status';
+  static const String PARCEL_DELIVERY_PERSONEL_NAME = 'delivery_personel_name';
+  static const String PARCEL_DELIVERY_PERSONEL_RATING = 'delivery_personel_rating';
+  
+
+  static const String PARCEL_PICKUP_CODE = 'parcel_pickup_code';
+  static const String PARCEL_SENDING_BRANCH_ID = 'parcel_sending_branch_id';
+  static const String PARCEL_RECEIVING_BRANCH_ID = 'parcel_receiving_branch_id';
 
 
+  static const String  TIMESTAMP = 'timestamp';
+
+  static const String PARCEL_SENDING_TIME = 'parcel_sending_time';
+
+  static const String PARCEL_ORDER_PLACEMENT_TIME = 'parcel_order_placement_time';
+
+  static const String PARCEL_PICKUP_TIME = 'parcel_pickup_time';
+  static const String PARCEL_PROCESSING_TIME = 'parcel_processing_time';
+
+  static const String PARCEL_DELIVERY_REQUEST_STATUS ='parcel_delivery_request_status';
+
+  
 
 }
 
 class Parcel {
   String userDocID;
   String dispatchUserID;
-  String courierService;
+  String courierServiceDocID;
+  String courierServiceName;
   String courierSelectionType;
   String parcelDocID;
   String parcelCode;
-  String parcelPickupcode;
+  String parcelPickupCode;
   String senderFullname;
   String senderPhoneNumber;
   String receipientFullname;
@@ -74,7 +95,7 @@ class Parcel {
   int parcelDepartureTime;
   int parcelInTransitTime;
   int parcelReachedDestinationTime;
-  double parcelDeliveryTime;
+  int parcelDeliveryTime;
   String  parcelType;
   int parcelsQuantity;
   int parcelDeliveryType;
@@ -82,7 +103,19 @@ class Parcel {
   double parcelPickupLocationLng;
   double parcelDestinationLat;
   double parcelDestinationLng;
-  int parcelPaymentStatus;
+  String parcelDestinationState;
+  String parcelDeliveryPersonelName;
+  String parcelDeliveryRequestStatus;
+  double    parcelDeliveryPersonelRating;
+  double parcelPaymentStatus;
+  String parcelSendingBranchID;
+  String parcelReceivingBranchID;
+  int parcelSendingTime;
+  int parcelPickupTime;
+  int parcelOrderPlacementTime;
+  int parcelProcessingTime;
+
+  int timestamp;
 
 
  
@@ -91,22 +124,24 @@ class Parcel {
       {
 this.userDocID = '',
 this.dispatchUserID = '',
-this.courierService = '',
+this.courierServiceDocID = '',
+this.courierServiceName = '',
 this.courierSelectionType = '',
 this.parcelDocID = '',
-this.parcelPickupcode = '',
+this.parcelPickupCode = '',
 this.parcelDeliveryFare = 0.0,
 this.parcelCode = '',
 this.senderFullname = '',
 this.senderPhoneNumber = '',
 this.receipientFullname = '',
 this.receipientPhoneNumber = '',
-this.parcelPickupLocationAddress = 'pick up ',
+this.parcelPickupLocationAddress = '',
 this.parcelPickupLocationLat = 0.0,
 this.parcelPickupLocationLng = 0.0,
-this.parcelDestinationAddress = 'destination address',
+this.parcelDestinationAddress = '',
 this.parcelDestinationLat = 0.0,
 this.parcelDestinationLng = 0.0,
+this.parcelDestinationState  = '',
 this.transitProgress = '',
 this.parcelPrice = 0,
 this.parcelPayer = 0,
@@ -117,42 +152,68 @@ this.parcelDepositFare = 0,
 this.parcelDepartureTime = 0,
 this.parcelInTransitTime = 0,
 this.parcelReachedDestinationTime = 0,
-this.parcelDeliveryTime = 0.0,
+this.parcelDeliveryTime = 0,
 this.parcelType = '', 
 this.parcelsQuantity = 1,
 this.parcelDeliveryType = 0,
-this.parcelPaymentStatus = 0
+this.parcelPaymentStatus = 0,
+this.parcelDeliveryPersonelName = '',
+this.parcelDeliveryRequestStatus = '',
+this.parcelDeliveryPersonelRating = 0.0,
+this.parcelSendingBranchID = '',
+this.parcelReceivingBranchID = '',
+this.parcelSendingTime = 0,
+this.timestamp = 0, 
+this.parcelPickupTime = 0,
+this.parcelOrderPlacementTime = 0,
+this.parcelProcessingTime = 0,
       });
 
   factory Parcel.fromMap(Map<String, dynamic> json) => Parcel(
-      userDocID: json[ParcelsDataModel.USER_DOC_ID],
-      dispatchUserID: json[ParcelsDataModel.DISPATCH_USER_ID],
-      courierService: json[ParcelsDataModel.COURIER_SERVICE ],
-      courierSelectionType: json[ParcelsDataModel.COURIER_SELECTION_TYPE],
-      parcelDocID: json[ParcelsDataModel.PARCEL_DOC_ID],
-      senderFullname: json[ParcelsDataModel.SENDER_FULLNAME],
-      senderPhoneNumber: json[ParcelsDataModel.SENDER_PHONE_NUMBER],
-      receipientFullname: json[ParcelsDataModel.RECEIPIENT_FULLNAME],
-      receipientPhoneNumber: json[ParcelsDataModel.RECEIPIENT_PHONE_NUMBER],
-      parcelPickupLocationAddress: json[ParcelsDataModel.PARCEL_PICKUP_LOCATION_ADDRESS],
-      parcelDestinationAddress: json[ParcelsDataModel.PARCEL_DESTINATION_ADDRESS],
-      transitProgress: json[ParcelsDataModel.TRANSIT_PROGRESS],
-      parcelPrice: json[ParcelsDataModel.PARCEL_PRICE],
-      parcelSize: json[ParcelsDataModel.PARCEL_SIZE],
-      parcelPickupLocationLat: json[ParcelsDataModel.PARCEL_PICKUP_LOCATION_LAT],
-      parcelPickupLocationLng: json[ParcelsDataModel.PARCEL_PICKUP_LOCATION_LNG],
-      pickUpTime: json[ParcelsDataModel.PICKUP_TIME],
-      parcelDepositTime: json[ParcelsDataModel.PARCEL_DEPOSIT_TIME],
-      parcelDepartureTime: json[ParcelsDataModel.PARCEL_DEPARTURE_TIME],
-      parcelInTransitTime : json[ParcelsDataModel.PARCEL_IN_TRANSIT_TIME],
-      parcelReachedDestinationTime: json[ParcelsDataModel.PARCEL_REACHED_DESTINATION_TIME],
-      parcelDeliveryTime: json[ParcelsDataModel.PARCEL_DELIVERY_TIME],
-      parcelDepositFare: json[ParcelsDataModel.PARCEL_DEPOSIT_FARE],
-      parcelType            : json[ParcelsDataModel.PARCEL_TYPE],
-      parcelsQuantity : json[ParcelsDataModel.PARCELS_QUANTITY],
-      parcelPayer:  json[ParcelsDataModel.PARCEL_PAYMENT],
-      parcelDeliveryType:  json[ParcelsDataModel.PARCEL_DELIVERY_TYPE],
-      parcelPaymentStatus: json[ParcelsDataModel.PARCEL_PAYMENT_STATUS]
+      userDocID: json[ParcelDataModel.USER_DOC_ID],
+      dispatchUserID: json[ParcelDataModel.DISPATCH_USER_ID],
+      courierServiceDocID: json[ParcelDataModel.COURIER_SERVICE ],
+      courierServiceName: json[ParcelDataModel.COURIER_SERVICE_NAME ],
+      courierSelectionType: json[ParcelDataModel.COURIER_SELECTION_TYPE],
+      parcelDocID: json[ParcelDataModel.PARCEL_DOC_ID],
+      senderFullname: json[ParcelDataModel.SENDER_FULLNAME],
+      senderPhoneNumber: json[ParcelDataModel.SENDER_PHONE_NUMBER],
+      receipientFullname: json[ParcelDataModel.RECEIPIENT_FULLNAME],
+      receipientPhoneNumber: json[ParcelDataModel.RECEIPIENT_PHONE_NUMBER],
+      parcelPickupLocationAddress: json[ParcelDataModel.PARCEL_PICKUP_LOCATION_ADDRESS],
+      parcelDestinationAddress: json[ParcelDataModel.PARCEL_DESTINATION_ADDRESS],
+      parcelPrice: json[ParcelDataModel.PARCEL_PRICE],
+      parcelSize: json[ParcelDataModel.PARCEL_SIZE],
+      parcelPickupLocationLat: json[ParcelDataModel.PARCEL_PICKUP_LOCATION_LAT],
+      parcelPickupLocationLng: json[ParcelDataModel.PARCEL_PICKUP_LOCATION_LNG],
+      pickUpTime: json[ParcelDataModel.PICKUP_TIME],
+      parcelDepositTime: json[ParcelDataModel.PARCEL_DEPOSIT_TIME],
+      parcelDepartureTime: json[ParcelDataModel.PARCEL_DEPARTURE_TIME],
+      parcelInTransitTime : json[ParcelDataModel.PARCEL_IN_TRANSIT_TIME],
+      parcelReachedDestinationTime: json[ParcelDataModel.PARCEL_REACHED_DESTINATION_TIME],
+      parcelDeliveryRequestStatus: json[ParcelDataModel.PARCEL_DELIVERY_REQUEST_STATUS],
+      parcelDeliveryTime: json[ParcelDataModel.PARCEL_DELIVERY_TIME],
+      parcelDepositFare: json[ParcelDataModel.PARCEL_DEPOSIT_FARE],
+      parcelDeliveryFare: json[ParcelDataModel.PARCEL_DELIVERY_FARE],
+      parcelCode: json[ParcelDataModel.PARCEL_CODE],
+      parcelDestinationLat: json[ParcelDataModel.PARCEL_DESTINATION_LAT],
+      parcelDestinationLng: json[ParcelDataModel.PARCEL_DESTINATION_LNG],
+      parcelDestinationState: json[ParcelDataModel.PARCEL_DESTINATION_STATE],
+      parcelPickupCode: json[ParcelDataModel.PARCEL_PICKUP_CODE],
+      parcelType            : json[ParcelDataModel.PARCEL_TYPE],
+      parcelsQuantity : json[ParcelDataModel.PARCELS_QUANTITY],
+      parcelPayer:  json[ParcelDataModel.PARCEL_PAYMENT],
+      parcelDeliveryType:  json[ParcelDataModel.PARCEL_DELIVERY_TYPE],
+      parcelPaymentStatus: json[ParcelDataModel.PARCEL_PAYMENT_STATUS],
+      parcelDeliveryPersonelName:  json[ParcelDataModel.PARCEL_DELIVERY_PERSONEL_NAME],
+      parcelDeliveryPersonelRating:  json[ParcelDataModel.PARCEL_DELIVERY_PERSONEL_RATING],
+      parcelSendingBranchID:  json[ParcelDataModel.PARCEL_SENDING_BRANCH_ID],
+      parcelReceivingBranchID:  json[ParcelDataModel.PARCEL_RECEIVING_BRANCH_ID],
+      parcelPickupTime:  json[ParcelDataModel.PARCEL_PICKUP_TIME],
+      parcelOrderPlacementTime:  json[ParcelDataModel.PARCEL_ORDER_PLACEMENT_TIME],
+      parcelSendingTime:  json[ParcelDataModel.PARCEL_SENDING_TIME],
+      parcelProcessingTime:  json[ParcelDataModel.PARCEL_PROCESSING_TIME],
+      timestamp:  json[ParcelDataModel.TIMESTAMP],
 
       
       
@@ -160,57 +221,48 @@ this.parcelPaymentStatus = 0
 );
 
   Map<String, dynamic> toMap() => {
-        ParcelsDataModel.USER_DOC_ID: userDocID,
-        ParcelsDataModel.DISPATCH_USER_ID : dispatchUserID,
-        ParcelsDataModel.COURIER_SERVICE: courierService,
-        ParcelsDataModel.COURIER_SELECTION_TYPE : courierSelectionType,
-        ParcelsDataModel.PARCEL_CODE: parcelCode,
-        ParcelsDataModel.PARCEL_DOC_ID : parcelDocID,
-        ParcelsDataModel.SENDER_FULLNAME: senderFullname,
-        ParcelsDataModel.SENDER_PHONE_NUMBER : senderPhoneNumber,
-        ParcelsDataModel.RECEIPIENT_FULLNAME: receipientFullname,
-        ParcelsDataModel.RECEIPIENT_PHONE_NUMBER: receipientPhoneNumber,
-        ParcelsDataModel.PARCEL_PICKUP_LOCATION_ADDRESS : parcelPickupLocationAddress,
-        ParcelsDataModel.PARCEL_PICKUP_LOCATION_LAT : parcelPickupLocationLat,
-        ParcelsDataModel.PARCEL_PICKUP_LOCATION_LNG : parcelPickupLocationLng,
-        ParcelsDataModel.PARCEL_DESTINATION_ADDRESS: parcelDestinationAddress,
-        ParcelsDataModel.PARCEL_DESTINATION_LAT: parcelDestinationLat,
-        ParcelsDataModel.PARCEL_DESTINATION_LNG: parcelDestinationLng,
-        ParcelsDataModel.TRANSIT_PROGRESS: transitProgress,
-        ParcelsDataModel.PARCEL_PRICE: parcelPrice,
-        ParcelsDataModel.PARCEL_SIZE: parcelSize,
-        ParcelsDataModel.PICKUP_TIME:pickUpTime,
-        ParcelsDataModel.PARCEL_DEPARTURE_TIME: parcelDepositTime,
-        ParcelsDataModel.PARCEL_IN_TRANSIT_TIME: parcelInTransitTime,
-        ParcelsDataModel.PARCEL_REACHED_DESTINATION_TIME : parcelReachedDestinationTime,
-        ParcelsDataModel.PARCEL_DELIVERY_TIME: parcelDeliveryTime,
-        ParcelsDataModel.PARCEL_DEPOSIT_FARE : parcelDepositFare,
-        ParcelsDataModel.PARCEL_DELIVERY_FARE : parcelDeliveryFare,
-        ParcelsDataModel.PARCEL_TYPE : parcelType,
-        ParcelsDataModel.PARCELS_QUANTITY : parcelsQuantity,
-        ParcelsDataModel.PARCEL_PAYMENT : parcelPayer,
-        ParcelsDataModel.PARCEL_DELIVERY_TYPE : parcelDeliveryType,
-        ParcelsDataModel.PARCEL_PAYMENT_STATUS :parcelPaymentStatus
-        
+        ParcelDataModel.USER_DOC_ID: userDocID,
+        ParcelDataModel.DISPATCH_USER_ID : dispatchUserID,
+        ParcelDataModel.COURIER_SERVICE: courierServiceDocID,
+        ParcelDataModel.COURIER_SERVICE_NAME: courierServiceName,
+        ParcelDataModel.COURIER_SELECTION_TYPE : courierSelectionType,
+        ParcelDataModel.PARCEL_CODE: parcelCode,
+        ParcelDataModel.PARCEL_DOC_ID : parcelDocID,
+        ParcelDataModel.SENDER_FULLNAME: senderFullname,
+        ParcelDataModel.SENDER_PHONE_NUMBER : senderPhoneNumber,
+        ParcelDataModel.RECEIPIENT_FULLNAME: receipientFullname,
+        ParcelDataModel.RECEIPIENT_PHONE_NUMBER: receipientPhoneNumber,
+        ParcelDataModel.PARCEL_PICKUP_LOCATION_ADDRESS : parcelPickupLocationAddress,
+        ParcelDataModel.PARCEL_PICKUP_LOCATION_LAT : parcelPickupLocationLat,
+        ParcelDataModel.PARCEL_PICKUP_LOCATION_LNG : parcelPickupLocationLng,
+        ParcelDataModel.PARCEL_DESTINATION_ADDRESS: parcelDestinationAddress,
+        ParcelDataModel.PARCEL_DESTINATION_STATE: parcelDestinationState,
+        ParcelDataModel.PARCEL_DESTINATION_LAT: parcelDestinationLat,
+        ParcelDataModel.PARCEL_DESTINATION_LNG: parcelDestinationLng,
+        ParcelDataModel.PARCEL_PRICE: parcelPrice,
+        ParcelDataModel.PARCEL_SIZE: parcelSize,
+        ParcelDataModel.PICKUP_TIME:pickUpTime,
+        ParcelDataModel.PARCEL_DEPARTURE_TIME: parcelDepositTime,
+        ParcelDataModel.PARCEL_IN_TRANSIT_TIME: parcelInTransitTime,
+        ParcelDataModel.PARCEL_REACHED_DESTINATION_TIME : parcelReachedDestinationTime,
+        ParcelDataModel.PARCEL_DELIVERY_TIME: parcelDeliveryTime,
+        ParcelDataModel.PARCEL_DEPOSIT_FARE : parcelDepositFare,
+        ParcelDataModel.PARCEL_DELIVERY_FARE : parcelDeliveryFare,
+        ParcelDataModel.PARCEL_TYPE : parcelType,
+        ParcelDataModel.PARCELS_QUANTITY : parcelsQuantity,
+        ParcelDataModel.PARCEL_PAYMENT : parcelPayer,
+        ParcelDataModel.PARCEL_DELIVERY_TYPE : parcelDeliveryType,
+        ParcelDataModel.PARCEL_PAYMENT_STATUS :parcelPaymentStatus,
+        ParcelDataModel.PARCEL_DELIVERY_PERSONEL_RATING : parcelDeliveryPersonelRating,
+        ParcelDataModel.PARCEL_DELIVERY_PERSONEL_NAME :parcelDeliveryPersonelName,
+        ParcelDataModel.PARCEL_DELIVERY_REQUEST_STATUS: parcelDeliveryRequestStatus,
+        ParcelDataModel.PARCEL_PICKUP_TIME : parcelPickupTime,
+        ParcelDataModel.PARCEL_ORDER_PLACEMENT_TIME : parcelOrderPlacementTime,
+        ParcelDataModel.PARCEL_PROCESSING_TIME :parcelProcessingTime,
+        ParcelDataModel.TIMESTAMP :timestamp
+      
+       };
 
-     
-      };
+  
 
-  Parcel userFromJson(String str) {
-    final jsonData = json.decode(str);
-    return Parcel.fromMap(jsonData);
-  }
-
-  String userToJson(Parcel data) {
-    final dyn = data.toMap();
-    return json.encode(dyn);
-  }
-
-  static bool toBool(input, {type = ''}) {
-    return input == 1;
-  }
-
-  static bool fromBool(input) {
-    return input == 'true';
-  }
 }

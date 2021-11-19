@@ -42,7 +42,7 @@ class BaseView<T extends BaseModel> extends StatefulWidget {
       this.bottomNavBar,
       this.isParcelRoute = false,
       this.showSettingsIcon = false,
-      this.isBlankBaseRoute = false,
+      this.isBlankBaseRoute = true,
       this.bottomInset = false,
       this.fab,
       this.requestPermissions = true});
@@ -240,6 +240,8 @@ late CustomAnimationControl simpleAnimControl ;
              
            ),
           
+           
+           
                 ]
                 )
                      

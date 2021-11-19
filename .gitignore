@@ -47,4 +47,4 @@ app.*.map.json
 
 
 # my confidential files
-android/google-services.json
+android/app/google-services.json

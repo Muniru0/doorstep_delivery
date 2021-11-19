@@ -1,5 +1,6 @@
 
-import 'package:doorstep_delivery/constants.dart';
+
+import 'package:doorstep_delivery/constants/constants.dart';
 import 'package:doorstep_delivery/model_registry.dart';
 import 'package:doorstep_delivery/services/models/auth_model.dart';
 import 'package:doorstep_delivery/services/models/courier_company_model.dart';

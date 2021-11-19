@@ -1,5 +1,6 @@
 
-import 'package:doorstep_delivery/constants.dart';
+
+import 'package:doorstep_delivery/constants/constants.dart';
 import 'package:doorstep_delivery/ui/utils/colors_and_icons.dart';
 import 'package:doorstep_delivery/ui/utils/widgets.dart';
 import 'package:flutter/material.dart';

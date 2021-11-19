@@ -2,14 +2,16 @@
 
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doorstep_delivery/constants.dart';
+import 'package:doorstep_delivery/constants/constants.dart';
 import 'package:doorstep_delivery/services/auth_service.dart';
 import 'package:doorstep_delivery/services/data_models/branch_managers_data_model.dart';
-import 'package:doorstep_delivery/services/data_models/branch_office_personel_data_model.dart';
+import 'package:doorstep_delivery/services/data_models/branch_delivery_personel_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/company_branch_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/company_branch_destinations_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/company_data_model.dart';
+import 'package:doorstep_delivery/services/data_models/parcel_data_model.dart';
 import 'package:doorstep_delivery/services/firebase_storage_uploader.dart';
+import 'package:doorstep_delivery/services/secure_store.dart';
 import 'package:doorstep_delivery/services/server_requests.dart';
 import 'package:doorstep_delivery/services/shared_prefs.dart';
 import 'package:doorstep_delivery/ui/utils/helper_functions.dart/functions.dart';
@@ -18,7 +20,7 @@ import 'package:flutter/services.dart';
 
 
 
-class CompanyService{
+class DeliveryPersonelService{
 
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -31,7 +33,7 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
     try{
       var companyObjMap = company.toMap();
-     SharedPref.addCompany(companyObjMap);
+     SharedPref.addCompany(company);
    User? _user =  await AuthService().getCurrentUser();
       if(_user == Null){
           return {'result': false, 'desc': 'Session expired, please re-authenticate to continue'};
@@ -138,7 +140,7 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   // get the company with the company ID
   Future<Map<String,dynamic>> getCompanyWithID(companyDocID)async{
 
-    try{
+   try{
 
       DocumentSnapshot companyDoc = await _firestore.doc(Constants.COURIER_SERVICE_ROOT_DOC_PATH + Constants.ALL_COURIER_SERVICE_COMPANIES_COLLECTION_NAME + '/' + companyDocID).get();
 
@@ -149,7 +151,7 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
  return {'result':true, 'data': Company.fromMap(companyDoc.data() as Map<String,dynamic>)};
 
     }catch(e){
-      print('$e company service line 147');
+      print('$e company service line 153');
       return {'result': false,'desc': 'Unexpected error, please try again later.'};
     }
 
@@ -218,18 +220,18 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   
   
-  Future<Map<String,dynamic>> getCompanyStaff(staffFirebaseUid)async{
+  Future<Map<String,dynamic>> getDeliveryPersonelInfo(staffFirebaseUid)async{
      try{
 
         
 
     
 
-          DocumentSnapshot staffSnapshot = await _firestore.doc(Constants.COURIER_SERVICE_ROOT_DOC_PATH + Constants.COURIER_SERVICE_DELIVERY_PERSONEL_COLLECTION_NAME + '/' +staffFirebaseUid).get();
+          DocumentSnapshot staffSnapshot = await _firestore.doc(Constants.COURIER_SERVICE_ROOT_DOC_PATH + Constants.PARCELS_COL_ID + '/' + staffFirebaseUid).get();
 
           if(!staffSnapshot.exists){
           
-            return {'result':true,'data': null};
+            return {'result':true,'data': {}};
           
           }
 
@@ -581,6 +583,9 @@ return await ServerRequests.sendNetworkRequest(requestFlag, params: params);
     return _firestore.collection(Constants.COURIER_SERVICE_ROOT_DOC_PATH + Constants.PARCELS_COLLECTION_NAME + '/' + companyFirestoreID + '/' + Constants.PARCELS_COLLECTION_NAME).snapshots();
   }
 
+
+
+  
   Future<Map<String,dynamic>> addCompanyDeliveryPersonel({String branchID = '', String branchOfficePersonelEmail = '', String branchOfficePersonelPhone = ''}) async{
     
      try{
@@ -603,8 +608,225 @@ return await ServerRequests.sendNetworkRequest(requestFlag, params: params);
     }
   }
 
+  Future<Map<String,dynamic>>updateDeliveryPersonelInfo({String firebaseUid = '',required Map<String,dynamic> data}) async{
 
 
+    try{
+
+      // if the update is for the email or phone number
+      if(data.containsKey(DeliveryPersonelDataModel.DELIVERY_PERSONEL_EMAIL)){
+
+         
+         
+         User? _user;
+          try{
+
+            _user =    AuthService().getCurrentUser();
+
+
+          _user!.updateEmail(data[DeliveryPersonelDataModel.DELIVERY_PERSONEL_EMAIL]);
+
+
+
+          }on FirebaseException catch(e){
+
+              if(e.code == 'requires-recent-login'){
+              var res =    await SecureStorage.getUserPassword();
+
+              if(!res['result']){
+                return {'result': false,'desc': 'Please sign-out completely and try again.'};
+               
+              }
+
+                 AuthCredential _authCredential = EmailAuthProvider.credential(email:data[DeliveryPersonelDataModel.DELIVERY_PERSONEL_EMAIL] ,password: res['desc'] );
+        
+
+         
+              await _user?.reauthenticateWithCredential(_authCredential);
+
+               _user!.updateEmail(data[DeliveryPersonelDataModel.DELIVERY_PERSONEL_EMAIL]);
+
+              }else{
+                return {'result': false,'desc':getFirebaseAuthException(e.code)};
+              }
+             
+              
+          }
+       
+          WriteBatch _batch = _firestore.batch();
+
+          _batch.update(_firestore.doc('${Constants.COURIER_SERVICE_ROOT_DOC_PATH}${Constants.COURIER_SERVICE_DELIVERY_COLLECTION_NAME}/$firebaseUid'), data);
+
+           _batch.update(_firestore.doc('${Constants.CUSTOMERS_COLLECTION_PATH}/$firebaseUid'),data);
+
+           _batch.commit();
+
+           return {'result':true, 'data': 'sucess'};
+
+
+      }
+
+
+
+
+    myPrint('${Constants.COURIER_SERVICE_ROOT_DOC_PATH}${Constants.COURIER_SERVICE_DELIVERY_COLLECTION_NAME}/$firebaseUid',heading: 'Doc Path');
+    await _firestore.doc('${Constants.COURIER_SERVICE_ROOT_DOC_PATH}${Constants.COURIER_SERVICE_DELIVERY_COLLECTION_NAME}/$firebaseUid').update(data);
+
+    await SharedPref.storeValue(data);
+
+    return {'result': true, 'data': 'success'};
+
+
+
+
+    } catch(e){
+
+      myPrint('$e company service line 640');
+
+      return {'result': false,'desc': 'Unexpected error, please try again.'};
+    }
+  }
+
+
+  String getFirebaseAuthException(code){
+
+
+    
+    switch(code){
+      case  'invalid-email':
+      return "Email and password mismatch.";
+      case 'user-not-found':
+      return 'Email and password mismatch';
+      case 'wrong-password':
+      return 'Email and password mismatch';
+     case 'email-already-in-use':
+     return 'Please the email is already in use.';
+     case 'weak-password':
+     return 'Please provide a stronger password.';
+     case 'invalid-credential':
+     return 'Please the user credentials are mismatched';
+     case 'user-mismatch':
+     return 'Please sign-out completely and try again.';
+     case 'requires-recent-login':
+     return 'Please sign-out completely and sign-in to continue.';
+
+     default:return 'Authentication failed unexpectedly, please try again later.';
+    }
+  }
+
+  Future<Map<String,dynamic>>fetchActiveDelivery(String companyFirestoreID,String deliveryPersonelID)async{
+
+    try{
+
+          
+     QuerySnapshot _querySnapshot = await _firestore.collection('${Constants.ROOT_PARCELS_COL_ID}${Constants.PARCELS_COL_ID}/$companyFirestoreID/${Constants.PARCELS_COL_ID}').where(ParcelDataModel.DISPATCH_USER_ID,isEqualTo:deliveryPersonelID).where(ParcelDataModel.TIMESTAMP,isGreaterThan: 0).where(ParcelDataModel.PARCEL_DELIVERY_REQUEST_STATUS,isNotEqualTo: Constants.PARCEL_DELIVERY_STATUS_COMPLETED).orderBy(ParcelDataModel.TIMESTAMP).limitToLast(1).get();
+
+
+      if(_querySnapshot.size < 1){
+       
+        return {'result': true ,'data': Parcel()};
+
+      }
+
+    
+     
+     List<Parcel> _parcelObjsList =  _querySnapshot.docs.map((parcelDoc) => Parcel.fromMap(parcelDoc.data() as Map<String,dynamic>)).toList();
+
+     
+     return {'result': true,'data': _parcelObjsList};
+    }catch(e){
+
+
+      myPrint('$e company service line 1015');
+
+      return {'result': false,'desc': 'Unexpected error,whilst retrieving active deliveries. Please try again later.'};
+    }
+  }
+
+  Future<Map<String,dynamic>> fetchDeliveryPersonel(String deliveryPersonelID) async{
+
+
+  //  try{
+
+      DocumentSnapshot _doc = await _firestore.doc('${Constants.COURIER_SERVICE_ROOT_DOC_PATH}${Constants.COURIER_SERVICE_DELIVERY_COLLECTION_NAME}/$deliveryPersonelID').get();
+
+
+      if(!_doc.exists){
+
+        return {'result': false,'desc': 'FATAL'};
+      }
+
+      myPrint(_doc.data(),heading: 'Delivery Personel Info');
+      return {'result': true, 'data': DeliveryPersonel.fromMap(_doc.data() as Map<String,dynamic>)};
+
+
+
+    // }catch(e){
+
+
+    //   myPrint('$e delivery personel service 751');
+    //   return {'result':false,'desc': 'Unexpected error, please try again.'};
+    // }
+
+
+
+  }
+
+  Future<Map<String,dynamic>> updateDeliveryPersonelOfflineState({required bool status,required DeliveryPersonel deliveryPersonel})async {
+
+
+    try{
+
+         myPrint('');
+    await _firestore.doc('${Constants.COURIER_SERVICE_ROOT_DOC_PATH}${Constants.COURIER_SERVICE_DELIVERY_COLLECTION_NAME}/${deliveryPersonel.deliveryPersonelID}').update({DeliveryPersonelDataModel.DELIVERY_PERSONEL_STATUS: status,DeliveryPersonelDataModel.DELIVERY_PERSONEL_STATUS_EDITOR: deliveryPersonel.deliveryPersonelID});
+    await      SharedPref.storeValue({DeliveryPersonelDataModel.DELIVERY_PERSONEL_STATUS: status,DeliveryPersonelDataModel.DELIVERY_PERSONEL_STATUS_EDITOR: deliveryPersonel.deliveryPersonelID});
+   
+
+    return {'result': true, 'data': 'success'};
+
+
+    
+    
+    }catch(e){
+
+      myPrint('$e delivery personel service line');
+      return {'result': false,'desc': 'Unexpected error, please try again.'};
+    }
+
+
+
+  }
+
+  Future<Map<String,dynamic>> fetchRecentParcelDelivery(companyFirestoreID,deliveryPersonelID)async {
+
+
+
+          try{
+
+          
+     QuerySnapshot _querySnapshot = await _firestore.collection('${Constants.ROOT_PARCELS_COL_ID}${Constants.PARCELS_COL_ID}/$companyFirestoreID/${Constants.PARCELS_COL_ID}').where(ParcelDataModel.DISPATCH_USER_ID,isEqualTo:deliveryPersonelID).orderBy(ParcelDataModel.TIMESTAMP).limitToLast(1).get();
+
+
+      if(_querySnapshot.size < 1){
+       
+        return {'result': true ,'data': Parcel()};
+
+      }
+
+    
+     
+     List<Parcel> _parcelObjsList =  _querySnapshot.docs.map((parcelDoc) => Parcel.fromMap(parcelDoc.data() as Map<String,dynamic>)).toList();
+
+     
+     return {'result': true,'data': _parcelObjsList};
+    }catch(e){
+
+
+      myPrint('$e company service line 1015');
+
+      return {'result': false,'desc': 'Unexpected error,whilst retrieving active deliveries. Please try again later.'};
+    }
+  }
 
 
 

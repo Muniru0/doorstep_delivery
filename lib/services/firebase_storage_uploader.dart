@@ -1,4 +1,6 @@
 import 'dart:io';
+
+import 'package:doorstep_delivery/constants/constants.dart';
 import 'package:doorstep_delivery/ui/utils/helper_functions.dart/functions.dart';
 import 'package:firebase_core/firebase_core.dart' as fc;
 import 'package:firebase_storage/firebase_storage.dart';
@@ -59,6 +61,23 @@ class FirebaseFileUploader {
     }
     
   }
+
+
+  String fromDownloadLinkToString(String input){
+      
+     return input.contains(Constants.UNIQUE_STRING) ? Uri.encodeComponent(input).split('%2F').join(Constants.UNIQUE_STRING) : '';
+   
+ }
+
+  String fromStringToDownloadLink(input){
+
+
+    // TODO: use the constant unique string.
+     return input.contains('dhuhgk') ? Uri.decodeComponent(input).split('dhuhgk').join('%2F') : '';
+
+     return input.contains(Constants.UNIQUE_STRING) ? Uri.decodeComponent(input).split(Constants.UNIQUE_STRING).join('%2F') : '';
+
+}
 
 
  

@@ -10,6 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doorstep_delivery/services/firebase_storage_uploader.dart';
 import 'package:doorstep_delivery/ui/utils/colors_and_icons.dart';
 import 'package:doorstep_delivery/ui/utils/helper_functions.dart/functions.dart';
+import 'package:doorstep_delivery/ui/utils/widgets.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:simple_animations/simple_animations.dart';
 
 
 
@@ -39,16 +41,61 @@ class _TestRouteState extends State<TestRoute> {
   File? mfile;
 
   double? value = 0.0;
+late double _w;
+late double _h;
   @override
   Widget build(BuildContext context) {
+    _w = MediaQuery.of(context).size.width;
+    _h = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
+        padding: EdgeInsets.only(top: 300.0),
     
         width: 300,
-        height: 700,
+        height: 500,
         color: white,
         child: Center(
-          child: Column(
+          child: true ? 
+          
+             PlayAnimation<double>(
+                         tween: Tween(begin: 0.0,end: 1.0),
+                         builder: (context, child,value) {
+                           return Material(
+                              elevation: 35.0 * value,
+                              borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30.0)),
+                              color: Color(0xFFf7f7f9).withOpacity(0.93),
+                              child: Container(
+                                padding: EdgeInsets.only(top: 15.0),
+                                child: Column(
+                                  children: [
+                                     Container(
+                                          width: 50,
+                                          height: 5,
+                                          margin: EdgeInsets.only(bottom:10),
+                                          decoration: BoxDecoration(
+                                            color: Color(0xFF999ab7),
+                                            borderRadius: BorderRadius.circular(10.0),
+                                          ),
+                                        ),
+                                    Container(
+                                      
+                                        width: _w ,
+                                        height:  _h * 0.2 ,
+                                      padding: EdgeInsets.all(15.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30.0)),
+                                      ),
+                                      child: Container()
+                                    
+                                        ),
+                                  ],
+                                ),
+                              ),
+                                  );
+                         }
+                       )
+                    
+          : Column(
             children: [
                const  SizedBox(height: 250),
                 Stack(
@@ -167,7 +214,7 @@ class _TestRouteState extends State<TestRoute> {
            }else{
              print('error uploading file');
            }
-                var bytes = await file!.readAsBytes();
+                var bytes = await file.readAsBytes();
              var le =  await file.length();
              myPrint(le/1024,heading: 'file size');
           //    File fi = File([], 'assets/images/parcel_icon.png');

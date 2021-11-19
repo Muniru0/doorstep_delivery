@@ -27,7 +27,7 @@ void setupRegister(){
   // register.registerSingleton<ParcelsModel>(ParcelsModel());
   // register.registerSingleton<CourierManagerModel>(CourierManagerModel());
    register.registerSingleton<UserModel>(UserModel());
-   register.registerSingleton<CompanyModel>(CompanyModel());
+   register.registerSingleton<DeliveryPersonelModel>(DeliveryPersonelModel());
 
   // registering models
   // register.registerFactory<ErrorModel>(() => ErrorModel());

@@ -1,18 +1,22 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doorstep_delivery/services/company_service.dart';
+import 'package:doorstep_delivery/constants/constants.dart';
+import 'package:doorstep_delivery/services/delivery_personel_service.dart';
 import 'package:doorstep_delivery/services/data_models/branch_managers_data_model.dart';
-import 'package:doorstep_delivery/services/data_models/branch_office_personel_data_model.dart';
+import 'package:doorstep_delivery/services/data_models/branch_delivery_personel_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/company_branch_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/company_branch_destinations_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/company_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/parcel_stats_data_model.dart';
+import 'package:doorstep_delivery/services/data_models/user_data_model.dart';
 import 'package:doorstep_delivery/services/models/base_model.dart';
+import 'package:doorstep_delivery/services/models/user_model.dart';
+import 'package:flutter/material.dart';
 
 
 
-class CompanyModel extends BaseModel{
+class DeliveryPersonelModel extends BaseModel{
 
   
    Company _company = Company(); 
@@ -30,7 +34,7 @@ class CompanyModel extends BaseModel{
   int totalNumberOfDeliveryPersonel = 0;
 
   File? companyLogoFile;
-  final CompanyService _companyService = CompanyService();
+  final DeliveryPersonelService _deliveryPersonelService = DeliveryPersonelService();
 
   late Timer timer;
 
@@ -47,7 +51,7 @@ class CompanyModel extends BaseModel{
   List<CompanyBranchDestination> _selectedCompanyBranchDestinations = [];
 
 
-   File? companyBranchManagerAvatar;
+   Image? _deliveryPersonelImage;
 
   List<CompanyBranch> companyBranchesList = [];
 
@@ -55,16 +59,20 @@ class CompanyModel extends BaseModel{
 
   List<DeliveryPersonel> branchOfficePersonelList = [];
 
+  DeliveryPersonel _deliveryPersonelObj = DeliveryPersonel();
+
 
     
-   File? get getCompanyBranchManagerAvatar => companyBranchManagerAvatar;
+   Image? get getDeliveryPersonelAvatar => _deliveryPersonelImage;
+    void setDeliveryPersonelAvatar(Image image){
 
-  List<DeliveryPersonel> get getDeliveryPersonels => branchOfficePersonelList;
-   void setCompanyBranchManagerAvatar(file){
-
-        companyBranchManagerAvatar = file;
+        _deliveryPersonelImage = image;
         notifyListeners();
    } 
+
+
+  List<DeliveryPersonel> get getDeliveryPersonels => branchOfficePersonelList;
+ 
  
  List<CompanyBranch> get getCompanyBranchesList => companyBranchesList;
 
@@ -161,7 +169,7 @@ int get getTotalNumberOfDeliveryPersonel => totalNumberOfDeliveryPersonel;
     }
 
 
-  refreshCompanyModel({Company? company}){
+  refreshDeliveryPersonelCompanyObj({Company? company}){
       
 
      
@@ -267,7 +275,7 @@ int get getTotalNumberOfDeliveryPersonel => totalNumberOfDeliveryPersonel;
 
   Stream<DocumentSnapshot> fetchCompanyParcelsDailyStatsStream() {
  
-      return  _companyService.fetchCompanyParcelsDailyStatsStream(companyFirestoreID: getCompany.companyFirestoreID);
+      return  _deliveryPersonelService.fetchCompanyParcelsDailyStatsStream(companyFirestoreID: getCompany.companyFirestoreID);
 
 
   }
@@ -292,7 +300,7 @@ int get getTotalNumberOfDeliveryPersonel => totalNumberOfDeliveryPersonel;
     
       
    
-   var res = await _companyService.addCompany(getCompany);
+   var res = await _deliveryPersonelService.addCompany(getCompany);
 
      if(timer.isActive){
          timer.cancel();
@@ -305,14 +313,14 @@ int get getTotalNumberOfDeliveryPersonel => totalNumberOfDeliveryPersonel;
  
 
   void updateCredentialsVerification(Map params) async{
-    var res = await _companyService.updateCredentialsVerification(params);
+    var res = await _deliveryPersonelService.updateCredentialsVerification(params);
   }
 
 
   Future<Map<String,dynamic>> getCompanyStaffStats({bool
   updatemodel = true})async{
 
-    var res = await _companyService.getCompanyStaffStats(getCompany.companyFirestoreID);
+    var res = await _deliveryPersonelService.getCompanyStaffStats(getCompany.companyFirestoreID);
 
     // check if the result has positive results
     if(res['result'] && updatemodel){
@@ -332,21 +340,21 @@ int get getTotalNumberOfDeliveryPersonel => totalNumberOfDeliveryPersonel;
   
 
   Future<Map> numberOf({String flag = ''}) async{
-    return await _companyService.getCompanyBranches(companyFirestoreID: getCompany.companyFirestoreID,flag: flag );
+    return await _deliveryPersonelService.getCompanyBranches(companyFirestoreID: getCompany.companyFirestoreID,flag: flag );
 
    
   }
 
 
 
-  Future<Map<String,dynamic>> getCompanyStaff({String userRole = '',firebaseUid}) async{
+  Future<Map<String,dynamic>> getDeliveryPersonelInfo({String userRole = '',firebaseUid}) async{
    
-    return await _companyService.getCompanyStaff(firebaseUid);
+    return await _deliveryPersonelService.getDeliveryPersonelInfo(firebaseUid);
 
   }
 
   Stream<QuerySnapshot> getCompanyLiveParcels() {
-    return _companyService.getCompanyLiveParcels(getCompany.companyFirestoreID);
+    return _deliveryPersonelService.getCompanyLiveParcels(getCompany.companyFirestoreID);
   }
 
   
@@ -424,7 +432,7 @@ void addToSelectedCompanyBranchDestinations(CompanyBranchDestination destination
 
     CompanyBranch _branchMap = CompanyBranch(companyFirestoreID:companyFirestoreID ,companyBranchName: branchName,companyBranchManagerEmail: managerEmail,companyBranchManagerTel: managerPhone,companyBranchCityOrTown: townOrCity,companyBranchAddress: address,);
     
-     var res =  await _companyService.addCompanyBranch(_branchMap);
+     var res =  await _deliveryPersonelService.addCompanyBranch(_branchMap);
 
      if(res['result']){
        updateCompanyBranchDetails(companyBranchID : res['desc']);
@@ -436,7 +444,7 @@ void addToSelectedCompanyBranchDestinations(CompanyBranchDestination destination
 
      Future<Map> addCompanyBranchDestinations()async{
 
-     return await _companyService.addCompanyBranchDestinations(getCompanyBranchDestinations);
+     return await _deliveryPersonelService.addCompanyBranchDestinations(getCompanyBranchDestinations);
    }
 
   bool addToCompanyDestinationsList({String destination = '', String minParcelPrice = ''}) {
@@ -491,12 +499,12 @@ void addToSelectedCompanyBranchDestinations(CompanyBranchDestination destination
 
   Future<Map> saveCompanyBranchDestinations() async{
     
-    return await _companyService.saveCompanyBranchDestinations(getCompanyBranchDestinations);
+    return await _deliveryPersonelService.saveCompanyBranchDestinations(getCompanyBranchDestinations);
   }
 
   Future<Map> fetchCompanyBranches() async{
    
-    var res =  await _companyService.fetchCompanyBranches(offset:getQueryOffset,companyDocID: getCompany.companyFirestoreID);
+    var res =  await _deliveryPersonelService.fetchCompanyBranches(offset:getQueryOffset,companyDocID: getCompany.companyFirestoreID);
     if(res['result']){
 
       if(res['data'] != null){
@@ -531,7 +539,7 @@ String get getSelectedDateRange => selectedDateRange;
 
   Future<Map<String,dynamic>> fetchCompanyBranchManagers({String branchID = ''}) async{
 
-   return await _companyService.fetchCompanyBranchManagers(branchID: branchID);
+   return await _deliveryPersonelService.fetchCompanyBranchManagers(branchID: branchID);
 
   
   }
@@ -539,17 +547,17 @@ String get getSelectedDateRange => selectedDateRange;
   Future<Map<String,dynamic>> fetchCompanyStaff({String userRole = '',String firebaseUid = ''})async {
 
 
- return await _companyService.fetchCompanyStaff(userRole: userRole,firebaseUid: firebaseUid);
+ return await _deliveryPersonelService.fetchCompanyStaff(userRole: userRole,firebaseUid: firebaseUid);
   }
 
   Future<Map<String,dynamic>>  deleteCompanyStaff({String userRole = '', String firebaseUid = ''}) async{
 
-    return await _companyService.deleteCompanyStaff(userRole: userRole, firebaseUid: firebaseUid);
+    return await _deliveryPersonelService.deleteCompanyStaff(userRole: userRole, firebaseUid: firebaseUid);
   }
 
   Future<Map<String,dynamic>> addBranchManager({String branchManagerEmail = '', String branchManagerPhone = '', required String branchID}) async{
 
-    return await _companyService.addCompanyBranchManager(branchID: branchID,branchManagerEmail: branchManagerEmail,branchManagerPhone: branchManagerPhone);
+    return await _deliveryPersonelService.addCompanyBranchManager(branchID: branchID,branchManagerEmail: branchManagerEmail,branchManagerPhone: branchManagerPhone);
   }
 
   void addDeliveryPersonelToList(int index, DeliveryPersonel branchOfficePersonel) {
@@ -571,7 +579,7 @@ DeliveryPersonel   removeFromCompanyDeliveryPersonelsList(int index) {
 
 
   Future<Map<String,dynamic>> getCompanyDeliveryPersonels({String branchID = ''})async {
-return await _companyService.fetchCompanyDeliveryPersonel(branchID: branchID);
+        return await _deliveryPersonelService.fetchCompanyDeliveryPersonel(branchID: branchID);
 
   }
 
@@ -579,8 +587,69 @@ return await _companyService.fetchCompanyDeliveryPersonel(branchID: branchID);
 
   Future<Map<String,dynamic>> addDeliveryPersonel({String branchID = '', String branchOfficePersonelEmail = '', String branchOfficePersonelPhone = ''}) async{
 
-    return await _companyService.addCompanyDeliveryPersonel(branchID: branchID,branchOfficePersonelEmail: branchOfficePersonelEmail,branchOfficePersonelPhone: branchOfficePersonelPhone);
+    return await _deliveryPersonelService.addCompanyDeliveryPersonel(branchID: branchID,branchOfficePersonelEmail: branchOfficePersonelEmail,branchOfficePersonelPhone: branchOfficePersonelPhone);
   }
+
+  getLiveParcelsDeliveriesStream() {}
+
+       DeliveryPersonel get getDeliveryPersonel => _deliveryPersonelObj;
+      refreshDeliveryPersonelObj(updatedObj){
+            _deliveryPersonelObj = updatedObj;
+
+            notifyListeners();
+      }
+  Future<Map<String,dynamic>> updateDeliveryPersonelInfo(Map<String,dynamic> data)async {
+
+    var res = await _deliveryPersonelService.updateDeliveryPersonelInfo(data: data,firebaseUid: getDeliveryPersonel.deliveryPersonelID);
+
+   Map<String,dynamic> _deliveryPersonelMap = getDeliveryPersonel.toMap();
+  
+    data.forEach((key, value) { 
+       _deliveryPersonelMap[key] = value;
+    });
+  
+
+   refreshDeliveryPersonelObj(DeliveryPersonel.fromMap(_deliveryPersonelMap));
+
+  
+
+
+
+   return res;
+  }
+
+
+
+  Future<Map<String,dynamic>> fetchActiveDeliveries() async{
+
+    return await _deliveryPersonelService.fetchActiveDelivery(getDeliveryPersonel.companyDocID,getDeliveryPersonel.deliveryPersonelID);
+  }
+
+  Future<Map<String,dynamic>>fetchDeliveryPersonel() async{
+    return await _deliveryPersonelService.fetchDeliveryPersonel(getDeliveryPersonel.deliveryPersonelID);
+  }
+
+ Future<Map<String,dynamic>> updateDeliveryPersonelOfflineState(status)async {
+
+   var res = await _deliveryPersonelService.updateDeliveryPersonelOfflineState(status:status, deliveryPersonel: getDeliveryPersonel);
+
+   Map<String,dynamic> _deliveryPersonelMap = getDeliveryPersonel.toMap();
+   _deliveryPersonelMap[DeliveryPersonelDataModel.DELIVERY_PERSONEL_STATUS] = status;
+
+   _deliveryPersonelMap[DeliveryPersonelDataModel.DELIVERY_PERSONEL_STATUS_EDITOR] = getDeliveryPersonel.deliveryPersonelID;
+
+   refreshDeliveryPersonelObj(DeliveryPersonel.fromMap(_deliveryPersonelMap));
+  
+
+  return res;
+ 
+ }
+
+  Future<Map<String,dynamic>> fetchRecentParcelDelivery()async {
+    return await _deliveryPersonelService.fetchRecentParcelDelivery(getDeliveryPersonel.companyDocID,getDeliveryPersonel.deliveryPersonelID);
+  }
+
+
 
 
   

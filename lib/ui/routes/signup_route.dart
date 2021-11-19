@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:doorstep_delivery/constants.dart';
+import 'package:doorstep_delivery/constants/constants.dart';
 import 'package:doorstep_delivery/model_registry.dart';
 import 'package:doorstep_delivery/services/models/auth_model.dart';
 import 'package:doorstep_delivery/services/models/user_model.dart';
@@ -77,11 +77,18 @@ late  bool noCourierCompaniesFound;
  late bool showCompanySearchDialog;
 
   TextEditingController addressController = TextEditingController();
+  TextEditingController  _deliveryVehicleBrandController = TextEditingController();
+  TextEditingController _deliveryVehicleModelController = TextEditingController();
+  TextEditingController _deliveryVehicleRegistrationNumberController = TextEditingController();
+
 
  late bool _showBlurredOverlay;
  late bool overlayStateOccupied;
 
- var _selectedImage;
+  var _selectedImage;
+
+  late String  _selectedDeliveryVehicleType;
+
 
 
   
@@ -101,6 +108,7 @@ late  bool noCourierCompaniesFound;
     isFetchingCompanies = false;
     noCourierCompaniesFound = false;  
     selectedTownOrCity = "";
+    _selectedDeliveryVehicleType =  '';
     choices = [];
     showCompanySearchDialog = false;
     
@@ -117,7 +125,6 @@ late  bool noCourierCompaniesFound;
       
       body: BaseView<AuthModel>(
         showBlurredOverlay: _showBlurredOverlay,
-        isBlankBaseRoute: true,
               child: SizedBox(
         width: _w,
         height: _h,
@@ -677,8 +684,8 @@ child: Column(
                          
                                // signup the user
                               Map<String,dynamic> res =  await  _authModel.signupUserWithEmailAndPassword(emailController.text.trim(),passwordController.text.trim(),fullname: fullnameController.text.trim(),avatar: _selectedImage,userRole: Constants.COURIER_SERVICE_DELIVERY_PERSONEL_ROLE,dateOfBirth: dateOfBirthController.text.trim(), 
-                               address:addressController.text.trim(),
-                               phone: phoneController.text.trim(),gender: selectedGender, townOrCity: selectedTownOrCity);
+                              address:addressController.text.trim(),
+                              phone: phoneController.text.trim(),gender: selectedGender, townOrCity: selectedTownOrCity);
                     
                     
                                   if(Navigator.canPop(context)){
@@ -687,7 +694,7 @@ child: Column(
                     
                                   
                            // show the error if the account creation failed.       
-                              if(!res!['result']){
+                              if(!res['result']){
                               UtilityWidgets.requestErrorDialog(context,title: 'Account Creation',desc: res['desc'],cancelAction: (){
                                       if(Navigator.canPop(context)){
                                          Navigator.pop(context);

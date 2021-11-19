@@ -1,6 +1,8 @@
 
 import 'dart:async';
+import 'package:doorstep_delivery/constants/constants.dart';
 import 'package:doorstep_delivery/services/auth_service.dart';
+import 'package:doorstep_delivery/services/data_models/branch_delivery_personel_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/company_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/user_data_model.dart';
 import 'package:doorstep_delivery/ui/utils/helper_functions.dart/functions.dart';
@@ -15,12 +17,12 @@ class SharedPref {
   static const String ACCOUNT_VERIFICATION = "account_verification";
   static const String SESSION_VALID = "session_valid";
 
-  static Future<Map<String,dynamic>> storeUser(MyUser _user)async{
+  static Future<Map<String,dynamic>> storeDeliveryPersonel(DeliveryPersonel deliveryPersonel)async{
       try{
 
       
-      SharedPreferences _spf = await getInstance();
-      _user.toMap().forEach((key, value) { 
+      SharedPreferences _spf = await SharedPreferences.getInstance();
+      deliveryPersonel.toMap().forEach((key, value) { 
 
         if(value is int){
           _spf.setInt(key, value);
@@ -41,23 +43,27 @@ return {'result': true};
   }
 
 
-  static Future<Map<String,dynamic>> getUser({SharedPreferences? spfInstance})async{
+  static Future<Map<String,dynamic>> getDeliveryPersonel({SharedPreferences? spfInstance})async{
       try{
 
-        if(spfInstance == null){
-           spfInstance = await getInstance();
-        }
+        
+           spfInstance ?? await SharedPreferences.getInstance();
+    
       
-      Map<String,dynamic> _userMap = MyUser().toMap();
+      Map<String,dynamic> _deliveryPersonelMap = DeliveryPersonel().toMap();
       
-      _userMap.forEach((key, value) { 
+      _deliveryPersonelMap.forEach((key, value) { 
 
-       
-       _userMap[key] =spfInstance!.get(key) ?? _userMap[key];
-          
+      
+       _deliveryPersonelMap[key] =spfInstance!.get(key) ?? _deliveryPersonelMap[key];
+       if(spfInstance.get(key) is bool){
+         myPrint('$key: ${spfInstance.get(key)}');
+
+       }
       });
-     
-      return {'result':true,'data':MyUser.fromMap(_userMap)};
+
+        myPrint(_deliveryPersonelMap,heading: 'delivery personel info map');
+      return {'result':true,'data':DeliveryPersonel.fromMap(_deliveryPersonelMap)};
 
       }catch(e){
            print('$e shared prefs .dart line 64');
@@ -73,7 +79,7 @@ return {'result': true};
       try{
 
         if(spfInstance == null){
-           spfInstance = await getInstance();
+           spfInstance = await SharedPreferences.getInstance();
         }
       
       Map<String,dynamic> _companyMap =   Company().toMap();
@@ -96,42 +102,11 @@ return {'result': true};
   }
 
 
-  static Future<Map> handleUserAccVerification({bool? accVer}) async {
-    try {
-      SharedPreferences _spf = await getInstance();
-      if (accVer == null) {
-        return {"result": _spf.getBool(ACCOUNT_VERIFICATION), "desc": ""};
-      }
-
-      var res = _spf.setBool(ACCOUNT_VERIFICATION, accVer);
-
-      return {"result": res, "desc": ""};
-    } catch (e) {
-      return {"result": false, "desc": "Error Storing data."};
-    }
-  }
-
-  static Future<SharedPreferences> getInstance() async {
-    return await SharedPreferences.getInstance();
-  }
-
-  static Future<Map> storeLoginCredentials({
-    String fullname = "",
-    String phoneNumber = "",
-  }) async {
-    try {
-      var res = (await getInstance())
-          .setString(LOGIN_CREDENTIALS, "$fullname$phoneNumber");
-
-      return {"result": res, "desc": ""};
-    } catch (e) {
-      return {"result": false, "desc": "Error Storing data."};
-    }
-  }
+ 
 
   static Future<Map> updateSettings(Map settings) async {
     try {
-      SharedPreferences _i = await getInstance();
+      SharedPreferences _i = await SharedPreferences.getInstance();
 
       if (settings.length > 0) {
         settings.forEach((key, value) {
@@ -160,12 +135,14 @@ return {'result': true};
   }
 
 
-  static Future<Map> addCompany(Map<String,dynamic> company) async {
+  static Future<Map> addCompany(Company _company) async {
     try {
-      SharedPreferences _i = await getInstance();
+      SharedPreferences _i = await SharedPreferences.getInstance();
 
-      if (company.length > 0) {
-        company.forEach((key, value) {
+      Map<String,dynamic> _companyMap = _company.toMap();
+
+      if (_companyMap.isNotEmpty) {
+        _companyMap.forEach((key, value) {
           if (value is bool) {
             _i.setBool(key, value);
           }
@@ -178,9 +155,11 @@ return {'result': true};
             _i.setInt(key, value);
           }
         });
+      }else{
+        return  {'result': true,'data':''};
       }
 
-      return {"result": true, "desc": ""};
+      return {"result": true, "data": "success"};
     } catch (e) {
       print(e);
       return {
@@ -189,35 +168,49 @@ return {'result': true};
       };
     }
   }
-
-
-
-  static Future<Map> getLoginCredentials() async {
+ 
+  
+  
+  static Future<Map<String,dynamic>> storeValue(Map<String,dynamic> map)async{
+    
     try {
-      String? res = (await getInstance()).getString(LOGIN_CREDENTIALS);
-      if (res!.isEmpty) {
-        return {"result": false, "desc": ""};
-      }
-      return {"result": true, "desc": res};
+      SharedPreferences _i = await SharedPreferences.getInstance();
+
+          map.forEach((key, value) { 
+
+
+          if (value is bool) {
+            _i.setBool(key, value);
+          }
+
+          if (value is String) {
+            _i.setString(key, value);
+          }
+
+          if (value is int) {
+            _i.setInt(key, value);
+          }
+
+          });
+     
+
+        
+      
+
+      return {"result": true, "data": "success"};
     } catch (e) {
-      return {"result": false, "desc": ""};
+      print('$e shared prefs line 188');
+      return {
+        "result": false,
+        "desc": "Unexpected error occured,while updating settings."
+      };
     }
   }
 
-  static Future<Map> signOut() async {
-    try {
-      var res = await (await getInstance()).setString(LOGIN_CREDENTIALS, "");
-
-      return {"result": res, "desc": ""};
-    } catch (e) {
-      print(e);
-      return {"result": false, "desc": "Error Signing Out."};
-    }
-  }
 
   static Future<Map<String,dynamic>> getValue(key) async {
     try {
-      SharedPreferences _i = await getInstance();
+      SharedPreferences _i = await SharedPreferences.getInstance();
 
       return {"result": true, "desc": _i.get(key)};
     } on PlatformException catch (e) {
@@ -227,50 +220,17 @@ return {'result': true};
     }
   }
 
-  static Future initSettings() async {
+  
+  static Future<Map<String,dynamic>> getValues(Set keys,{sharedPrefInstance}) async {
     try {
-      SharedPreferences _i = await getInstance();
-      Set<String> keys = _i.getKeys();
-      print("All the keys $keys");
 
-      print("All sets ${keys.first}");
-      Map res = {};
-      keys.forEach((key) {
-        res.putIfAbsent(key, () => _i.get(key));
-      });
-
-      return {"result": true, "desc": res};
-    } catch (e) {
-      print(e);
-      return {"result": false, "desc": ""};
-    }
-  }
-
-  static Future fetchSettings() async {
-    try {
-      SharedPreferences _i = await getInstance();
-      Set<String> keys = _i.getKeys();
-      print("All the keys $keys");
-
-      print("All sets ${keys.first}");
-      Map res = {};
-      keys.forEach((key) {
-        res.putIfAbsent(key, () => _i.get(key));
-      });
-
-      return {"result": true, "desc": res};
-    } catch (e) {
-      print(e);
-
-      return {"result": false, "desc": ""};
-    }
-  }
-
-
-
-  static Future<Map<String,dynamic>> getValues(Set keys) async {
-    try {
-      SharedPreferences _i = await getInstance();
+       SharedPreferences _i;
+      if(sharedPrefInstance != null){
+        _i = sharedPrefInstance;
+      }else{
+        _i = await SharedPreferences.getInstance();
+      }
+      
 
       Map resultantMap = {};
 
@@ -297,15 +257,20 @@ return {'result': true};
   static Future<Map<String,dynamic>> initializeUser() async{
 
     try{
-        
+
+    
+       
+       
         // get the shared prefs instance
-        SharedPreferences spfInstance = await getInstance();
+        SharedPreferences spfInstance = await SharedPreferences.getInstance();
 
         // get the stored user in the SharedPrefs
-         Map<String,dynamic> userMap =  await getUser(spfInstance: spfInstance);
+         Map<String,dynamic> deliveryPersonelMap =  await getDeliveryPersonel(spfInstance: spfInstance);
+
+
 
         // declare and initialize the resultant map
-        Map<String,dynamic> resultantMap = {'result': true,'user_data':MyUser(),'company_data':Company(),'firebase_user': null,'phone_verification': false};
+        Map<String,dynamic> resultantMap = {'result': true,'delivery_personel_obj':DeliveryPersonel(),'company_obj':Company(),'firebase_user': null,'phone_verification': false};
 
         // get the current firebase user
         User? _user = AuthService().getCurrentUser();
@@ -316,13 +281,13 @@ return {'result': true};
         resultantMap['show_onboarding'] = !showOnboardingMap['result'] || showOnboardingMap['desc'] == null ? true : false;
       
       // if the user's info can be found inside the local storage
-      if(userMap['result']){
+      if(deliveryPersonelMap['result']){
           
             // add the firebase user info
            resultantMap['firebase_user'] = _user; 
 
             // add the user info stored locally
-           resultantMap['user_data'] = userMap['data'];
+           resultantMap['delivery_personel_obj'] = deliveryPersonelMap['data'];
 
           // fetch the users company info
           Map<String,dynamic> companyMapRes = await getCompany();
@@ -331,17 +296,25 @@ return {'result': true};
           Map<String,dynamic> userClaims = await AuthService().getUserAuthClaimns();
           
           if(!userClaims['result']){
-            return {'firebase_user' : true,'user_data': MyUser,'company_data': Company(),'phone_verification': true};
+            return {'result':false,'firebase_user' : false,'delivery_personel_obj': DeliveryPersonel(),'company_obj': Company(),'phone_verification': false};
           }
 
          resultantMap['phone_verification'] = userClaims['phone_verification'];
+      
+         if(userClaims.containsKey('blocked') ){
+           resultantMap['blocked'] = true;
+         }
 
            // add the users company info 
-           resultantMap['company_data'] = companyMapRes['result'] ? companyMapRes['data'] : Company();
+           resultantMap['company_obj'] = companyMapRes['result'] ? companyMapRes['data'] : Company();
           
         
+
+
+
       }
      
+      myPrint(resultantMap,heading: '');
       return resultantMap;
       
     }catch(e){
@@ -352,34 +325,5 @@ return {'result': true};
 
 
 
-   static Future<Map<String,dynamic>> storeCompany(Company _company)async{
-      try{
-
-      
-      SharedPreferences _spf = await getInstance();
-      _company.toMap().forEach((key, value) { 
-
-        if(value is int){
-          _spf.setInt(key, value);
-         
-        }else if(value is bool){
-          _spf.setBool(key, value);
-          
-        }else if(value is double){
-          _spf.setDouble(key, value);
-          
-        }else{
-          _spf.setString(key, value);
-          
-        }
-        
-      });
-      }catch(e){
-
-      }
-     
-return {'result': true};
-  }
-
-
+ 
 }

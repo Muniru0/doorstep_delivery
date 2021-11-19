@@ -1,5 +1,7 @@
-import 'package:doorstep_delivery/constants.dart';
+
+import 'package:doorstep_delivery/constants/constants.dart';
 import 'package:doorstep_delivery/model_registry.dart';
+import 'package:doorstep_delivery/services/data_models/branch_delivery_personel_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/user_data_model.dart';
 import 'package:doorstep_delivery/services/models/auth_model.dart';
 import 'package:doorstep_delivery/services/models/courier_company_model.dart';
@@ -7,6 +9,7 @@ import 'package:doorstep_delivery/services/models/user_model.dart';
 import 'package:doorstep_delivery/services/utils/local_auth.dart';
 import 'package:doorstep_delivery/ui/base_route.dart';
 import 'package:doorstep_delivery/ui/utils/colors_and_icons.dart';
+import 'package:doorstep_delivery/ui/utils/helper_functions.dart/functions.dart';
 import 'package:doorstep_delivery/ui/utils/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +35,7 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
   bool activateSignInButtons = false;
   String storedPassword = "";
   late  OverlayEntry _overlayEntry;
-  late MyUser _user;
+  late DeliveryPersonel _deliveryPersonel;
   late AuthModel _authModel;
   bool _isPasswordValid = false;
   bool _showBlurredOverlay = false;
@@ -52,7 +55,7 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
   initState() {
     super.initState();
 
-    _user = register<UserModel>().getUser;
+    _deliveryPersonel = register<DeliveryPersonelModel>().getDeliveryPersonel;
     _authModel = register<AuthModel>();
     
     
@@ -73,7 +76,7 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
     _w = MediaQuery.of(context).size.width;
     _h = MediaQuery.of(context).size.height;
 
-    return BaseView<UserModel>(
+    return BaseView<DeliveryPersonelModel>(
       isBlankBaseRoute: true,
       child:Container(
               padding: EdgeInsets.only(top: _h * 0.07, left: 20.0, right: 20.0),
@@ -88,7 +91,8 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
                       return Container(
                         width: _w,
                         margin:const EdgeInsets.only(left: 15.0),
-                        child: RichText(text:  TextSpan(
+                        child:
+                         RichText(text:  TextSpan(
                           children: [
                             TextSpan(
                               text: 'Doorstep',
@@ -100,6 +104,7 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
                             ),
                           ]
                         )),
+                    
                       );
                     }
                   ),
@@ -136,13 +141,13 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
                   
                   Container(
                     margin:const EdgeInsets.only(bottom: 10.0),
-                    child: ScopedModelDescendant<UserModel>(
+                    child: ScopedModelDescendant<DeliveryPersonelModel>(
                         builder: (context, child, model) {
                       var firstName = "";
-                      if (_user.fullname != null) {
-                        if (_user.fullname!.contains(" ")) {
+                      if (_deliveryPersonel.deliveryPersonelName != null) {
+                        if (_deliveryPersonel.deliveryPersonelName.contains(" ")) {
                           var splitName =
-                              _user.fullname!.split(" ");
+                              _deliveryPersonel.deliveryPersonelName.split(" ");
                           firstName = splitName[0];
                         }
                       }
@@ -163,10 +168,10 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
                   ),
                   Container(
                       margin:const EdgeInsets.only(bottom: 25.0),
-                      child: ScopedModelDescendant<UserModel>(
+                      child: ScopedModelDescendant<DeliveryPersonelModel>(
                           builder: (context, child, model) {
                           return Text(
-                            "${_user.phoneNumber.substring(0, 3)}-${_user.phoneNumber.substring(3, 6)}-${_user.phoneNumber.substring(6, 10)}",
+                            "${_deliveryPersonel.deliveryPersonelPhone.substring(0, 3)}-${_deliveryPersonel.deliveryPersonelPhone.substring(3, 6)}-${_deliveryPersonel.deliveryPersonelPhone.substring(6, 10)}",
                             style:const TextStyle(color: Color(0xFFcdcece), fontSize: 14.0) );
                       })),
                
@@ -205,7 +210,7 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
                                   decoration: TextDecoration.underline)))),
                   Container(
                       margin:const EdgeInsets.only(bottom: 10.0),
-                      child: ScopedModelDescendant<UserModel>(
+                      child: ScopedModelDescendant<DeliveryPersonelModel>(
                           builder: (context, child, model) {
                         return UtilityWidgets.customConfirmationButton(context,
                             () async {
@@ -214,7 +219,7 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
                               title: "Signing In");
                              
                        
-                          var res = await _authModel.reauthenticateUserWithPassword(_user.email,_passwordController.text,_user.userRole,companyDocID:register<CompanyModel>().getCompany.companyFirestoreID);
+                          var res = await _authModel.reauthenticateUserWithPassword(_deliveryPersonel.deliveryPersonelEmail,_passwordController.text,companyDocID:register<DeliveryPersonelModel>().getCompany.companyFirestoreID);
                          
                           if (Navigator.canPop(context)) {
                             Navigator.pop(context);
@@ -223,16 +228,21 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
                          if(res['result']){
        
                     
-                    if(res['data'] == null){
+                    if(res['data'].isEmpty){
                       
                               Navigator.pushNamedAndRemoveUntil(context, Constants.WAITING_DIRECTOR_AUTHORIZATION_ROUTE, (route) => false);
                               return;
                     }
 
+
+
                         Navigator.pushNamedAndRemoveUntil(context, Constants.HOME_ROUTE, (route) => false);
    
-
+        return;
          }
+
+
+        
     
       UtilityWidgets.requestErrorDialog(context,title: 'Sign-In ',desc: res['desc'],cancelAction: (){
         Navigator.pop(context);
@@ -397,7 +407,7 @@ class _ReAuthRouteState extends State<ReAuthRoute> {
         }
          
         UtilityWidgets.requestProcessingDialog(context, title: "Signing in...");
-         res  = await _authModel.reauthenticateWithBiometrics(userRole: _user.userRole,companyDocID: register<CompanyModel>().getCompany.companyFirestoreID);
+         res  = await _authModel.reauthenticateWithBiometrics(companyDocID: register<DeliveryPersonelModel>().getCompany.companyFirestoreID);
         if (Navigator.canPop(context)) {
           Navigator.pop(context);
         }

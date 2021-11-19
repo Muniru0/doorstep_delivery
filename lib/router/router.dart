@@ -1,5 +1,6 @@
 
-import 'package:doorstep_delivery/constants.dart';
+
+import 'package:doorstep_delivery/constants/constants.dart';
 import 'package:doorstep_delivery/ui/routes/forgot_password_route.dart';
 import 'package:doorstep_delivery/ui/routes/home_route.dart';
 import 'package:doorstep_delivery/ui/routes/login_route.dart';
@@ -7,6 +8,7 @@ import 'package:doorstep_delivery/ui/routes/otp_verification_route.dart';
 import 'package:doorstep_delivery/ui/routes/password_updated_success_route.dart';
 import 'package:doorstep_delivery/ui/routes/re_authentication_route.dart';
 import 'package:doorstep_delivery/ui/routes/set_new_password_route.dart';
+import 'package:doorstep_delivery/ui/routes/settings_route.dart';
 import 'package:doorstep_delivery/ui/routes/signup_route.dart';
 import 'package:doorstep_delivery/ui/routes/unknown_route.dart';
 import 'package:doorstep_delivery/ui/routes/waiting_company_authorization.dart';
@@ -49,7 +51,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           return CupertinoPageRoute(builder: (context) =>const PasswordUpdatedSuccessfullyRoute());
 
 
- 
+          case Constants.SETTINGS_ROUTE:
+          return CupertinoPageRoute(builder: (_) => SettingsRoute());
+
+
+
   //      case Constants.SELECT_LOCATION_ON_MAP_ROUTE:
   //     return CupertinoPageRoute(builder: (_) => SelectLocationOnMapRoute());
 

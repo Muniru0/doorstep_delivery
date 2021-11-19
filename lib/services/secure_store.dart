@@ -21,16 +21,10 @@ class SecureStorage {
       var res = await storage.read(key: "password");
 
      
-      if (res != null) {
-         print('-------------------------- here.');
-         print(res);
-        print('--------------------------');
-        return {"result": (res == password), "desc": "Invalid Password."};
-      }
-      print('-----------------------');
-      print(res);
-      print('------------------------');
-      return {"result": false, "desc": "Invalid Password."};
+       return {"result": (res == password), "data": (res == password)? 'Password Valid': "Invalid Password."};
+   
+
+    
     } catch (e) {
       print(e);
       return {"result": false, "desc": "Error validating password."};

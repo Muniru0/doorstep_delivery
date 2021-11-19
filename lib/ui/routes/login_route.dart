@@ -1,6 +1,7 @@
 
-import 'package:doorstep_delivery/constants.dart';
+import 'package:doorstep_delivery/constants/constants.dart';
 import 'package:doorstep_delivery/model_registry.dart';
+import 'package:doorstep_delivery/services/data_models/branch_delivery_personel_data_model.dart';
 import 'package:doorstep_delivery/services/models/auth_model.dart';
 import 'package:doorstep_delivery/services/models/courier_company_model.dart';
 import 'package:doorstep_delivery/services/models/user_model.dart';
@@ -44,8 +45,8 @@ class _LoginRouteState extends State<LoginRoute> {
 
   String? _passwordErrorText;
   late AuthModel _authModel;
-  late UserModel _userModel;
-  late CompanyModel _companyModel;
+  late DeliveryPersonelModel _deliveryPersonel;
+  late DeliveryPersonelModel _deliveryPersonelModel;
   
   @override
   void initState() {
@@ -55,9 +56,9 @@ class _LoginRouteState extends State<LoginRoute> {
     _emailErrorText ='';
     _passwordErrorText = '';
     _authModel = register<AuthModel>();
-    _userModel = register<UserModel>();
-    _companyModel = register<CompanyModel>();
-    handleInputFieldsFocus();
+    _deliveryPersonel = register<DeliveryPersonelModel>();
+    _deliveryPersonelModel = register<DeliveryPersonelModel>();
+   // handleInputFieldsFocus();
 
   }
 
@@ -85,6 +86,9 @@ class _LoginRouteState extends State<LoginRoute> {
        });
     });
   
+
+
+
   }
   
   
@@ -146,79 +150,84 @@ class _LoginRouteState extends State<LoginRoute> {
                     child: const Text("Sign to Continue", style: TextStyle(color: Color(0xFFcdcece), fontSize: 14.0))
                   ),
 
-          CustomAnimation<double>(
-                        duration:const Duration(milliseconds: 500),
-                        tween: Tween(begin: 0.0,end: 1.0),
-                        curve: Curves.easeInOut,
-                        control: emailAnimationControl,
-                        builder: (context, snapshot,animValue) {
-                          return Container(
-               height: 60.0,
-               width: _w,
-
-                  padding:const EdgeInsets.symmetric(horizontal: 30.0),
-                    decoration: BoxDecoration(
-                          
-                          borderRadius: BorderRadius.circular(7.0),
-                    ),
-                    child: Material(
-                          elevation: animValue * 20  ,
-                          shadowColor: Colors.white,
-                     borderRadius: BorderRadius.circular(7.0),
-                          child: Container(
-                            padding:const EdgeInsets.all(7.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin:const EdgeInsets.only(left: 20.0,bottom: 5.0),
-                                  child:const Text('EMAIL', style: TextStyle(color: black,fontWeight: FontWeight.bold, fontSize: 12.0)),
-                                ),
-
-                                Row(
-                                  children: [
-                                    Container(
-                                      margin: const EdgeInsets.only(right: 7.0),
-                                      child:const Icon(Feather.mail, color: brightMainColor,size: 14.0),
-                                    ),
-
-                                      Container(
-                                  width: _w! * 0.7,
-                                   padding:const EdgeInsets.only(right: 15.0), child: TextField(
-                                    keyboardType: TextInputType.name ,
-                                    controller: emailController,
-                                   focusNode: emailFocusNode,
-                                   textAlign: TextAlign.start,
-                                   autofocus: true,
-                                   
-                                    style:const TextStyle(
-                                      color: black,
-                                      fontSize: 14.0,
-                                      fontWeight : FontWeight.bold,
-                                    ),
-                                   cursorColor: warmPrimaryColor,
-                                    decoration:const InputDecoration.collapsed(
-                                      hintText: 'email',
-                                      hintStyle: TextStyle(
-                                        color: silverColor,
-                                        fontSize: 11,
-                                      ),
-                                    ),
-                                    onChanged: (String fullname){
-
-                                    },
-                                  ),
-                                ),
-              
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                    )
-                  );
-                        }
+          InkWell(
+            onTap: (){
+              emailFocusNode.requestFocus();
+            },
+            child: CustomAnimation<double>(
+                          duration:const Duration(milliseconds: 500),
+                          tween: Tween(begin: 0.0,end: 1.0),
+                          curve: Curves.easeInOut,
+                          control: emailAnimationControl,
+                          builder: (context, snapshot,animValue) {
+                            return Container(
+                 height: 60.0,
+                 width: _w,
+          
+                    padding:const EdgeInsets.symmetric(horizontal: 30.0),
+                      decoration: BoxDecoration(
+                            
+                            borderRadius: BorderRadius.circular(7.0),
                       ),
+                      child: Material(
+                            elevation: animValue * 20  ,
+                            shadowColor: Colors.white,
+                       borderRadius: BorderRadius.circular(7.0),
+                            child: Container(
+                              padding:const EdgeInsets.all(7.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin:const EdgeInsets.only(left: 20.0,bottom: 5.0),
+                                    child:const Text('EMAIL', style: TextStyle(color: black,fontWeight: FontWeight.bold, fontSize: 12.0)),
+                                  ),
+          
+                                  Row(
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.only(right: 7.0),
+                                        child:const Icon(Feather.mail, color: brightMainColor,size: 14.0),
+                                      ),
+          
+                                        Container(
+                                    width: _w! * 0.7,
+                                     padding:const EdgeInsets.only(right: 15.0), child: TextField(
+                                      keyboardType: TextInputType.name ,
+                                      controller: emailController,
+                                     focusNode: emailFocusNode,
+                                     textAlign: TextAlign.start,
+                                     autofocus: true,
+                                     
+                                      style:const TextStyle(
+                                        color: black,
+                                        fontSize: 14.0,
+                                        fontWeight : FontWeight.bold,
+                                      ),
+                                     cursorColor: warmPrimaryColor,
+                                      decoration:const InputDecoration.collapsed(
+                                        hintText: 'email',
+                                        hintStyle: TextStyle(
+                                          color: silverColor,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                      onChanged: (String fullname){
+          
+                                      },
+                                    ),
+                                  ),
+                
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                      )
+                    );
+                          }
+                        ),
+          ),
 
                       Container(
                         margin:const EdgeInsets.only(left: 10.0),
@@ -226,80 +235,85 @@ class _LoginRouteState extends State<LoginRoute> {
                       ),
        
                  
-              CustomAnimation<double>(
-                        duration:const Duration(milliseconds: 500),
-                        tween: Tween(begin: 0.0,end: 1.0),
-                        curve: Curves.easeInOut,
-                        control: passwordAnimationControl,
-                        builder: (context, snapshot,animValue) {
-                          return Container(
-               height: 60.0,
-               width: _w,
-                  margin: const EdgeInsets.only(top: 40.0),
-                  padding:const EdgeInsets.symmetric(horizontal: 30.0),
-                    decoration: BoxDecoration(
-                          
-                          borderRadius: BorderRadius.circular(7.0),
-                    ),
-                    child: Material(
-                          elevation: animValue * 20  ,
-                          shadowColor: Colors.white,
-                     borderRadius: BorderRadius.circular(7.0),
-                          child: Container(
-                            padding:const EdgeInsets.all(7.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin:const EdgeInsets.only(left: 20.0,bottom: 5.0),
-                                  child:const Text('PASSWORD', style: TextStyle(color: black,fontWeight: FontWeight.bold, fontSize: 12.0)),
-                                ),
-
-                                Row(
-                                  children: [
-                                    Container(
-                                      margin:const EdgeInsets.only(right: 7.0),
-                                      child:const Icon(Feather.lock, color:brightMainColor,size: 14.0),
-                                    ),
-
-                                      Container(
-                                  width: _w! * 0.7,
-                                   padding:const EdgeInsets.only(right: 15.0), child: TextField(
-                                    keyboardType: TextInputType.name ,
-                                    controller: passwordController,
-                                   focusNode: passwordFocusNode,
-                                   textAlign: TextAlign.start,
-                                 
-                                   obscureText: true,
-                                    style: const TextStyle(
-                                      color: black,
-                                      fontSize: 14.0,
-                                      fontWeight : FontWeight.bold,
-                                    ),
-                                   cursorColor: warmPrimaryColor,
-                                    decoration:const InputDecoration.collapsed(
-                                      hintText: 'password',
-                                      hintStyle: TextStyle(
-                                        color: silverColor,
-                                        fontSize: 11,
-                                      ),
-                                    ),
-                                    onChanged: (String fullname){
-
-                                    },
-                                  ),
-                                ),
-              
-
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                    )
-                  );
-                        }
+                  InkWell(
+                    onTap: (){
+                      passwordFocusNode.requestFocus();
+                    },
+                    child: CustomAnimation<double>(
+                          duration:const Duration(milliseconds: 500),
+                          tween: Tween(begin: 0.0,end: 1.0),
+                          curve: Curves.easeInOut,
+                          control: passwordAnimationControl,
+                          builder: (context, snapshot,animValue) {
+                            return Container(
+                 height: 60.0,
+                 width: _w,
+                    margin: const EdgeInsets.only(top: 40.0),
+                    padding:const EdgeInsets.symmetric(horizontal: 30.0),
+                      decoration: BoxDecoration(
+                            
+                            borderRadius: BorderRadius.circular(7.0),
                       ),
+                      child: Material(
+                            elevation: animValue * 20  ,
+                            shadowColor: Colors.white,
+                       borderRadius: BorderRadius.circular(7.0),
+                            child: Container(
+                              padding:const EdgeInsets.all(7.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin:const EdgeInsets.only(left: 20.0,bottom: 5.0),
+                                    child:const Text('PASSWORD', style: TextStyle(color: black,fontWeight: FontWeight.bold, fontSize: 12.0)),
+                                  ),
+              
+                                  Row(
+                                    children: [
+                                      Container(
+                                        margin:const EdgeInsets.only(right: 7.0),
+                                        child:const Icon(Feather.lock, color:brightMainColor,size: 14.0),
+                                      ),
+              
+                                        Container(
+                                    width: _w! * 0.7,
+                                     padding:const EdgeInsets.only(right: 15.0), child: TextField(
+                                      keyboardType: TextInputType.name ,
+                                      controller: passwordController,
+                                     focusNode: passwordFocusNode,
+                                     textAlign: TextAlign.start,
+                                   
+                                     obscureText: true,
+                                      style: const TextStyle(
+                                        color: black,
+                                        fontSize: 14.0,
+                                        fontWeight : FontWeight.bold,
+                                      ),
+                                     cursorColor: warmPrimaryColor,
+                                      decoration:const InputDecoration.collapsed(
+                                        hintText: 'password',
+                                        hintStyle: TextStyle(
+                                          color: silverColor,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                      onChanged: (String fullname){
+              
+                                      },
+                                    ),
+                                  ),
+                
+              
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                      )
+                    );
+                          }
+                        ),
+              ),
               Container(
                         margin:const EdgeInsets.only(left: 10.0,bottom: 20.0),
                         child: Text(_passwordErrorText!, style: const TextStyle(color: errorColor, fontSize: 15.0))
@@ -339,15 +353,15 @@ class _LoginRouteState extends State<LoginRoute> {
                    
                                // check if the user obj is not null,
                                // then refresh the user and company models
-                               if(_authResult['user_obj'] != null){
+                               if(_authResult['delivery_personel_obj'] != null){
                    
                    
                            // refresh the user model before                
-                           _userModel.refreshUserModel(user:_authResult['user_obj'] );
+                           _deliveryPersonel.refreshDeliveryPersonelObj(_authResult['delivery_personel_obj'] );
                              
                              // if the user has not yet verified his phone let him verify it. 
                              if(!_authResult['phone_verification']){
-                          Map<String,dynamic> res = await  _authModel.sendOTPCode(phoneNumber: _userModel.getUser.phoneNumber) ;
+                          Map<String,dynamic> res = await  _authModel.sendOTPCode(phoneNumber: _deliveryPersonel.getDeliveryPersonel.deliveryPersonelPhone) ;
                         if(!res['result']){
                         UtilityWidgets.requestErrorDialog(context,title: 'Sending Code',desc: res['desc'],cancelAction: (){
                           Navigator.pop(context);
@@ -360,29 +374,18 @@ class _LoginRouteState extends State<LoginRoute> {
                                 }
                                   
                             // update the company model
-                           if(_authResult['company_obj'] != null){
-                           
-                                   _companyModel.refreshCompanyModel(company: _authResult['company_obj']);
-                        Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => HomeRoute()), (route) => false);
-                              return;
-                              
+                  if(_authResult['company_obj'] != null){
+                  
+                          _deliveryPersonelModel.refreshDeliveryPersonelCompanyObj(company: _authResult['company_obj']);
+              Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => HomeRoute()), (route) => false);
+                    return;
+                    
                          
                    
-                                  }
-                                  // send them to the appropriate screen if they dont have a company yet.
-                     else{
+                              }else{
                    
-                                  var route = Constants.UNKNOWN_ROUTE;
-                                     // send the user to the appropriate screen 
-                              // depending on their roles 
-                              if(_userModel.getUser.userRole == Constants.COURIER_SERVICE_DIRECTOR_ROLE ){
-                               route = Constants.WELCOME_ROUTE;
-                              }else {
-                              route =  Constants.WAITING_DIRECTOR_AUTHORIZATION_ROUTE;
-                   
-                                     }
                                 
-                                Navigator.pushNamed(context,route);
+                                Navigator.pushNamedAndRemoveUntil(context,Constants.WAITING_DIRECTOR_AUTHORIZATION_ROUTE,(route) => false);
                                 return;
                               }
                         }
@@ -734,7 +737,7 @@ Widget inputField({icon, title = '',hint = '',positionedHeight = 0.45, textField
 
 //   var validationError = "";
 //   bool _showBlurredOverlay = false;
-//   UserModel _userModel!;
+//   DeliveryPersonelModel _deliveryPersonel!;
 //   bool isPasswordValid = false;
 //   TextEditingController _passwordController = TextEditingController();
 //   bool _credentialValid = false;
@@ -742,12 +745,12 @@ Widget inputField({icon, title = '',hint = '',positionedHeight = 0.45, textField
 //   @override
 //   initState() {
 //     super.initState();
-//     _userModel! = locator<UserModel>();
+//     _deliveryPersonel! = locator<DeliveryPersonelModel>();
 //   }
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return BaseView<UserModel>(
+//     return BaseView<DeliveryPersonelModel>(
 //       showBlurredOverlay: _showBlurredOverlay,
 //       screenTitle: "Login",
 //       showSettingsIcon: false,
@@ -850,7 +853,7 @@ Widget inputField({icon, title = '',hint = '',positionedHeight = 0.45, textField
 //                   );
 //                 var res;
 //                 if (isEmail(_textFieldController.text.trim())) {
-//                   res = await _userModel!.signInWithEmailAndPassword(
+//                   res = await _deliveryPersonel!.signInWithEmailAndPassword(
 //                       email: _textFieldController.text.trim(),
 //                       password: _passwordController.text.trim());
 //                 }else{

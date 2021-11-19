@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:doorstep_delivery/services/data_models/branch_delivery_personel_data_model.dart';
 import 'package:doorstep_delivery/ui/utils/helper_functions.dart/functions.dart';
 import  'package:flutter/services.dart';
 import 'package:doorstep_delivery/model_registry.dart';
@@ -101,7 +102,7 @@ class AuthModel extends BaseModel {
   //   return res;
   // }
 
-  Future<Map<String,dynamic>> signupUserWithEmailAndPassword(String email, String password, {String fullname = '', String phone = '', String userRole = '',dateOfBirth ='', String gender = '', String townOrCity = '', String address = '', required File avatar}
+  Future<Map<String,dynamic>> signupUserWithEmailAndPassword(String email, String password, {String fullname = '', String phone = '', String userRole = '',dateOfBirth ='', String gender = '', String townOrCity = '', String address = '', required File avatar, String deliveryVehicleType = '',  String deliveryVehicleBrand = '' , String deliveryVehicleModel ='' , String deliveryVehicleRegistrationNumber = ''}
       ) async {
 
 
@@ -117,6 +118,10 @@ class AuthModel extends BaseModel {
         townOrCity: townOrCity,
         phoneNumber: phone,
         userAvatarFile: avatar,
+        deliveryVehicleType: deliveryVehicleType,
+        deliveryVehicleBrand: deliveryVehicleBrand,
+        deliveryVehicleModel: deliveryVehicleModel,
+        deliveryVehicleRegistrationNumber: deliveryVehicleRegistrationNumber,
        );
 
       myPrint(res,heading: 'results from signup');
@@ -185,17 +190,17 @@ class AuthModel extends BaseModel {
     return await _authService.signOut();
   }
 
-Future<Map<String,dynamic>>  reauthenticateUserWithPassword(String email ,String password, String userRole, {String companyDocID = ''}) async{
+Future<Map<String,dynamic>>  reauthenticateUserWithPassword(String email ,String password, {String companyDocID = ''}) async{
 
   try{
 
-    var res = await _authService.reauthenticateUserWithPassword( password,userRole,companyDocID: companyDocID);
+    var res = await _authService.reauthenticateUserWithPassword( password,companyDocID: companyDocID);
 
 
 
       if(res['result']){
-         if(res['data'] is Company){
-           register<CompanyModel>().refreshCompanyModel(company:res['data']);
+         if(res['data'] is DeliveryPersonel){
+           register<DeliveryPersonelModel>().refreshDeliveryPersonelObj(res['data']);
          }
       }
       return res;
@@ -211,7 +216,7 @@ Future<Map<String,dynamic>> reauthenticateWithBiometrics({String userRole = '',S
 
       if(res['result']){
          if(res['data'] is Company){
-           register<CompanyModel>().refreshCompanyModel(company:res['data']);
+           register<DeliveryPersonelModel>().refreshDeliveryPersonelCompanyObj(company:res['data']);
          }
       }
   return res;

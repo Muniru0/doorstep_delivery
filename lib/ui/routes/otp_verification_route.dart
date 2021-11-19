@@ -1,5 +1,6 @@
 
-import 'package:doorstep_delivery/constants.dart';
+
+import 'package:doorstep_delivery/constants/constants.dart';
 import 'package:doorstep_delivery/model_registry.dart';
 import 'package:doorstep_delivery/services/models/auth_model.dart';
 import 'package:doorstep_delivery/services/models/courier_company_model.dart';
@@ -155,7 +156,7 @@ final TextEditingController _otpController = TextEditingController();
             return;
         }
           UtilityWidgets.transactionProcessingDialog(context,title:'Checking company information');
-     res = await register<CompanyModel>().getCompanyStaff(userRole: _userModel.getUser.userRole,firebaseUid: _userModel.getUser.firebaseUid);
+     res = await register<DeliveryPersonelModel>().getDeliveryPersonelInfo(userRole: _userModel.getUser.userRole,firebaseUid: _userModel.getUser.firebaseUid);
 
         // remove the request processing dialog 
         Navigator.pop(context);

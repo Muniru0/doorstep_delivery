@@ -1,9 +1,12 @@
 
-import 'package:doorstep_delivery/constants.dart';
+
+import 'package:doorstep_delivery/constants/constants.dart';
 import 'package:doorstep_delivery/model_registry.dart';
+import 'package:doorstep_delivery/services/data_models/branch_delivery_personel_data_model.dart';
 import 'package:doorstep_delivery/services/data_models/user_data_model.dart';
 import 'package:doorstep_delivery/services/models/base_model.dart';
 import 'package:doorstep_delivery/services/models/courier_company_model.dart';
+import 'package:doorstep_delivery/services/shared_prefs.dart';
 import 'package:doorstep_delivery/services/user_service.dart';
 import 'package:doorstep_delivery/ui/utils/helper_functions.dart/functions.dart';
 
@@ -17,29 +20,38 @@ class UserModel extends BaseModel {
   
  
   Future<Map<String, dynamic>> init() async {
+   
     try {
 
 
       // initialize the user info
-      Map<String,dynamic> res = await _userService.initializeUser();
-      
+      Map<String,dynamic> res = await SharedPref.initializeUser();
+       
       // store it in the model if available
       if(res["result"]){
+
        
-             if(res['user_data'].firebaseUid.isNotEmpty){
-                refreshUserModel(user: res['user_data']);
-                myPrint(res['company_data'].directorTel);
+         
+             if(res['delivery_personel_obj'].deliveryPersonelID.isNotEmpty  && !res.containsKey('blocked')){
+ myPrint('logging second');
                 
-                register<CompanyModel>().refreshCompanyModel(company: res['company_data']);
+                register<DeliveryPersonelModel>().refreshDeliveryPersonelObj(res['delivery_personel_obj']);
+               
+                
+                register<DeliveryPersonelModel>().refreshDeliveryPersonelCompanyObj(company: res['company_obj']);
+
               }    
          
         }
 
         return res;
+  
     } catch (e) {
       print("$e user model line 37");
       return {"result": false, "desc": "ERROR"};
     }
+
+
   }
 
 

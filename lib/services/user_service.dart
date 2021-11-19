@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doorstep_delivery/constants.dart';
+import 'package:doorstep_delivery/constants/constants.dart';
 import 'package:doorstep_delivery/services/data_models/user_data_model.dart';
 import 'package:doorstep_delivery/services/secure_store.dart';
 import 'package:doorstep_delivery/services/shared_prefs.dart';
@@ -14,20 +14,7 @@ class UserService {
  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
 
-  Future<Map<String, dynamic>> initializeUser() async {
-    try {
-   
-      return await SharedPref.initializeUser();
-     
-    } catch (e) {
-      print('$e user service line 29');
-
-      return {
-        'result': false,
-        'desc': 'Error initializing system.The app may not function properly.'
-      };
-    }
-  }
+ 
 
  
 
